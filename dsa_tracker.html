@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Pattern Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131c;
+    --surface2: #1a1a28;
+    --border: #2a2a40;
+    --accent: #7c6af7;
+    --accent2: #f7916a;
+    --accent3: #6af7b8;
+    --learn: #7c6af7;
+    --practice: #f7c06a;
+    --hard: #f7916a;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --done-bg: #1a2a1a;
+    --done-border: #2a4a2a;
+    --done-text: #6af7b8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,106,247,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,106,247,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* HEADER */
+  header {
+    margin-bottom: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 60%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding-bottom: 4px;
+  }
+
+  /* OVERALL PROGRESS */
+  .overall-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .stat-learn .stat-num { color: var(--learn); }
+  .stat-practice .stat-num { color: var(--practice); }
+  .stat-hard .stat-num { color: var(--hard); }
+  .stat-total .stat-num { color: var(--accent3); }
+
+  /* GLOBAL PROGRESS BAR */
+  .global-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .global-bar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .global-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    min-width: 36px;
+    text-align: right;
+  }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .filter-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    padding: 6px 14px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* PATTERN CARD */
+  .pattern-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .pattern-card:hover { border-color: var(--accent); }
+  .pattern-card.completed { border-color: var(--done-border); }
+
+  .pattern-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+  }
+
+  .pattern-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    min-width: 28px;
+  }
+
+  .pattern-name {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    flex: 1;
+  }
+
+  .pattern-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mini-bar {
+    width: 80px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .mini-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.3s;
+  }
+  .mini-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    min-width: 36px;
+    text-align: right;
+  }
+
+  .chevron {
+    color: var(--muted);
+    font-size: 0.8rem;
+    transition: transform 0.2s;
+  }
+  .pattern-card.open .chevron { transform: rotate(180deg); }
+
+  /* PATTERN BODY */
+  .pattern-body {
+    display: none;
+    padding: 0 24px 24px;
+  }
+  .pattern-card.open .pattern-body { display: block; }
+
+  /* PHASE SECTIONS */
+  .phase-section {
+    margin-bottom: 20px;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .phase-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .phase-learn .phase-badge { background: rgba(124,106,247,0.15); color: var(--learn); border: 1px solid rgba(124,106,247,0.3); }
+  .phase-practice .phase-badge { background: rgba(247,192,106,0.15); color: var(--practice); border: 1px solid rgba(247,192,106,0.3); }
+  .phase-hard .phase-badge { background: rgba(247,145,106,0.15); color: var(--hard); border: 1px solid rgba(247,145,106,0.3); }
+
+  .phase-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  /* PROBLEM ROWS */
+  .problem-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .problem-row:hover { background: var(--surface2); }
+  .problem-row.done { background: rgba(106,247,184,0.04); }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-size: 0.7rem;
+  }
+  .problem-row.done .check-box {
+    background: var(--accent3);
+    border-color: var(--accent3);
+    color: #0a0a0f;
+  }
+  .phase-learn .problem-row.done .check-box { background: var(--learn); border-color: var(--learn); color: #fff; }
+  .phase-practice .problem-row.done .check-box { background: var(--practice); border-color: var(--practice); color: #0a0a0f; }
+  .phase-hard .problem-row.done .check-box { background: var(--hard); border-color: var(--hard); color: #fff; }
+
+  .problem-content { flex: 1; min-width: 0; }
+
+  .problem-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+    line-height: 1.3;
+  }
+  .problem-row.done .problem-name {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  .problem-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .diff-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .diff-easy { background: rgba(106,247,184,0.12); color: var(--accent3); }
+  .diff-medium { background: rgba(247,192,106,0.12); color: var(--practice); }
+  .diff-hard { background: rgba(247,145,106,0.12); color: var(--hard); }
+
+  .lc-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .lc-link:hover { color: var(--accent); }
+
+  /* TIPS */
+  .tip-toggle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--hard);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    text-decoration: underline dotted;
+    transition: color 0.15s;
+    margin-top: 2px;
+    display: block;
+  }
+  .tip-toggle:hover { color: var(--accent2); }
+
+  .tip-box {
+    display: none;
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: rgba(247,145,106,0.07);
+    border-left: 2px solid var(--hard);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.75rem;
+    color: var(--text);
+    line-height: 1.5;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tip-box.visible { display: block; }
+
+  /* RESET BTN */
+  .reset-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: var(--hard); color: var(--hard); }
+
+  /* EXPAND ALL */
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .ctrl-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 7px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ctrl-btn:hover { border-color: var(--accent); color: var(--text); }
+
+  @media (max-width: 600px) {
+    .pattern-header { padding: 16px; }
+    .pattern-body { padding: 0 16px 16px; }
+    .mini-bar { width: 50px; }
+    h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="title-row">
+      <h1>DSA Patterns</h1>
+      <span class="subtitle">// 15 patterns · 20 problems each · 300 total</span>
+    </div>
+  </header>
+
+  <div class="overall-stats">
+    <div class="stat-box stat-learn">
+      <div class="stat-num" id="stat-learn">0/105</div>
+      <div class="stat-label">Learn Phase</div>
+    </div>
+    <div class="stat-box stat-practice">
+      <div class="stat-num" id="stat-practice">0/150</div>
+      <div class="stat-label">Practice Phase</div>
+    </div>
+    <div class="stat-box stat-hard">
+      <div class="stat-num" id="stat-hard">0/45</div>
+      <div class="stat-label">Challenge Phase</div>
+    </div>
+    <div class="stat-box stat-total">
+      <div class="stat-num" id="stat-total">0/300</div>
+      <div class="stat-label">Total Solved</div>
+    </div>
+  </div>
+
+  <div class="global-bar-wrap">
+    <span class="global-bar-label">OVERALL PROGRESS</span>
+    <div class="bar-track"><div class="bar-fill" id="global-bar"></div></div>
+    <span class="global-pct" id="global-pct">0%</span>
+  </div>
+
+  <div class="controls-row">
+    <button class="ctrl-btn" onclick="expandAll()">↓ Expand All</button>
+    <button class="ctrl-btn" onclick="collapseAll()">↑ Collapse All</button>
+  </div>
+
+  <div id="patterns-container"></div>
+</div>
+
+<script>
+const PATTERNS = [
+  {
+    id: 1, name: "Sliding Window",
+    learn: [
+      { name: "Maximum Sum Subarray of Size K", diff: "easy", lc: 643, tip: null },
+      { name: "Longest Substring Without Repeating Characters", diff: "medium", lc: 3, tip: null },
+      { name: "Fruit Into Baskets", diff: "medium", lc: 904, tip: null },
+      { name: "Permutation in String", diff: "medium", lc: 567, tip: null },
+      { name: "Find All Anagrams in a String", diff: "medium", lc: 438, tip: null },
+      { name: "Longest Repeating Character Replacement", diff: "medium", lc: 424, tip: null },
+      { name: "Longest Substring with At Most K Distinct Characters", diff: "medium", lc: 340, tip: null },
+    ],
+    practice: [
+      { name: "Minimum Window Substring", diff: "hard", lc: 76, tip: null },
+      { name: "Sliding Window Maximum", diff: "hard", lc: 239, tip: null },
+      { name: "Max Consecutive Ones III", diff: "medium", lc: 1004, tip: null },
+      { name: "Subarray Product Less Than K", diff: "medium", lc: 713, tip: null },
+      { name: "Number of Subarrays with Bounded Maximum", diff: "medium", lc: 795, tip: null },
+      { name: "Minimum Size Subarray Sum", diff: "medium", lc: 209, tip: null },
+      { name: "Longest Turbulent Subarray", diff: "medium", lc: 978, tip: null },
+      { name: "Binary Subarrays With Sum", diff: "medium", lc: 930, tip: null },
+      { name: "Count Number of Nice Subarrays", diff: "medium", lc: 1248, tip: null },
+      { name: "Minimum Operations to Reduce X to Zero", diff: "medium", lc: 1658, tip: null },
+    ],
+    hard: [
+      { name: "Substring with Concatenation of All Words", diff: "hard", lc: 30, tip: "Use a sliding window of size word_len × num_words. At each step, extract a word and check against a frequency map. Reset when a bad word is encountered." },
+      { name: "Minimum Window Subsequence", diff: "hard", lc: 727, tip: "Find the window using two-pointer forward scan (S→T), then shrink from the left to minimize. Repeat for every valid window found." },
+      { name: "Subarrays with K Different Integers", diff: "hard", lc: 992, tip: "Use the trick: exactly K = atMost(K) - atMost(K-1). Each atMost call is a standard variable sliding window." },
+    ]
+  },
+  {
+    id: 2, name: "Prefix Sum",
+    learn: [
+      { name: "Range Sum Query - Immutable", diff: "easy", lc: 303, tip: null },
+      { name: "Find Pivot Index", diff: "easy", lc: 724, tip: null },
+      { name: "Running Sum of 1d Array", diff: "easy", lc: 1480, tip: null },
+      { name: "Product of Array Except Self", diff: "medium", lc: 238, tip: null },
+      { name: "Subarray Sum Equals K", diff: "medium", lc: 560, tip: null },
+      { name: "Contiguous Array", diff: "medium", lc: 525, tip: null },
+      { name: "Subarray Sums Divisible by K", diff: "medium", lc: 974, tip: null },
+    ],
+    practice: [
+      { name: "Range Sum Query 2D - Immutable", diff: "medium", lc: 304, tip: null },
+      { name: "Path Sum III", diff: "medium", lc: 437, tip: null },
+      { name: "Maximum Size Subarray Sum Equals K", diff: "medium", lc: 325, tip: null },
+      { name: "Continuous Subarray Sum", diff: "medium", lc: 523, tip: null },
+      { name: "Count of Range Sum", diff: "hard", lc: 327, tip: null },
+      { name: "Number of Ways to Split Array", diff: "medium", lc: 2270, tip: null },
+      { name: "Ways to Make a Fair Array", diff: "medium", lc: 1664, tip: null },
+      { name: "Minimum Average Difference", diff: "medium", lc: 2256, tip: null },
+      { name: "Sum of Absolute Differences in a Sorted Array", diff: "medium", lc: 1685, tip: null },
+      { name: "Make Sum Divisible by P", diff: "medium", lc: 1590, tip: null },
+    ],
+    hard: [
+      { name: "Count of Smaller Numbers After Self", diff: "hard", lc: 315, tip: "Build prefix using merge sort or BIT. For each element, count inversions — elements to the right that are smaller." },
+      { name: "Maximum Sum of 3 Non-Overlapping Subarrays", diff: "hard", lc: 689, tip: "Precompute prefix sums for all windows of size K. Then use left[] and right[] arrays storing best window index up to/from each position." },
+      { name: "Number of Subarrays with Bounded Maximum", diff: "medium", lc: 795, tip: "Split on elements > R. Within segments, count subarrays with at least one element ≥ L using prefix logic: answer = f(R) - f(L-1)." },
+    ]
+  },
+  {
+    id: 3, name: "Two Pointers",
+    learn: [
+      { name: "Valid Palindrome", diff: "easy", lc: 125, tip: null },
+      { name: "Two Sum II - Input Array Is Sorted", diff: "medium", lc: 167, tip: null },
+      { name: "Remove Duplicates from Sorted Array", diff: "easy", lc: 26, tip: null },
+      { name: "Move Zeroes", diff: "easy", lc: 283, tip: null },
+      { name: "Sort Colors", diff: "medium", lc: 75, tip: null },
+      { name: "Container With Most Water", diff: "medium", lc: 11, tip: null },
+      { name: "3Sum", diff: "medium", lc: 15, tip: null },
+    ],
+    practice: [
+      { name: "Trapping Rain Water", diff: "hard", lc: 42, tip: null },
+      { name: "4Sum", diff: "medium", lc: 18, tip: null },
+      { name: "Remove Duplicates from Sorted Array II", diff: "medium", lc: 80, tip: null },
+      { name: "3Sum Closest", diff: "medium", lc: 16, tip: null },
+      { name: "Squares of a Sorted Array", diff: "easy", lc: 977, tip: null },
+      { name: "Backspace String Compare", diff: "easy", lc: 844, tip: null },
+      { name: "Long Pressed Name", diff: "easy", lc: 925, tip: null },
+      { name: "Minimum Difference Between Highest and Lowest of K Scores", diff: "easy", lc: 1984, tip: null },
+      { name: "Number of Subsequences That Satisfy the Given Sum Condition", diff: "medium", lc: 1498, tip: null },
+      { name: "Boats to Save People", diff: "medium", lc: 881, tip: null },
+    ],
+    hard: [
+      { name: "Trapping Rain Water II", diff: "hard", lc: 407, tip: "Use a min-heap (priority queue). Process cells from smallest boundary inward. Water at each cell = max boundary seen - cell height." },
+      { name: "Minimum Window Substring", diff: "hard", lc: 76, tip: "Maintain char frequency maps. Expand right until valid, shrink left to minimize. Track 'formed' count to know when window is valid." },
+      { name: "Maximize the Confusion of an Exam", diff: "medium", lc: 2024, tip: "Run the sliding window twice: once allowing K flips of 'F', once for 'T'. Take the max of both runs." },
+    ]
+  },
+  {
+    id: 4, name: "Fast & Slow Pointers",
+    learn: [
+      { name: "Linked List Cycle", diff: "easy", lc: 141, tip: null },
+      { name: "Linked List Cycle II", diff: "medium", lc: 142, tip: null },
+      { name: "Middle of the Linked List", diff: "easy", lc: 876, tip: null },
+      { name: "Happy Number", diff: "easy", lc: 202, tip: null },
+      { name: "Palindrome Linked List", diff: "easy", lc: 234, tip: null },
+      { name: "Find the Duplicate Number", diff: "medium", lc: 287, tip: null },
+      { name: "Circular Array Loop", diff: "medium", lc: 457, tip: null },
+    ],
+    practice: [
+      { name: "Reorder List", diff: "medium", lc: 143, tip: null },
+      { name: "Remove Nth Node From End of List", diff: "medium", lc: 19, tip: null },
+      { name: "Sort List", diff: "medium", lc: 148, tip: null },
+      { name: "Rotate List", diff: "medium", lc: 61, tip: null },
+      { name: "Delete the Middle Node of a Linked List", diff: "medium", lc: 2095, tip: null },
+      { name: "Intersection of Two Linked Lists", diff: "easy", lc: 160, tip: null },
+      { name: "Maximum Twin Sum of a Linked List", diff: "medium", lc: 2130, tip: null },
+      { name: "Odd Even Linked List", diff: "medium", lc: 328, tip: null },
+      { name: "Swapping Nodes in a Linked List", diff: "medium", lc: 1721, tip: null },
+      { name: "Find the Minimum and Maximum Number of Nodes Between Critical Points", diff: "medium", lc: 2058, tip: null },
+    ],
+    hard: [
+      { name: "LFU Cache", diff: "hard", lc: 460, tip: "Track min frequency. Use a HashMap<freq, LinkedHashSet<key>>. On access, move key to next frequency bucket and update min if needed." },
+      { name: "Linked List Components", diff: "medium", lc: 817, tip: "Put all G values in a HashSet. Walk the list — start counting a component when current is in set and previous wasn't (or was null)." },
+      { name: "Split Linked List in Parts", diff: "medium", lc: 725, tip: "Get length L. Each part is L/k nodes; the first L%k parts get one extra. Walk the list k times cutting at the right spot." },
+    ]
+  },
+  {
+    id: 5, name: "LinkedList In-place Reversal",
+    learn: [
+      { name: "Reverse Linked List", diff: "easy", lc: 206, tip: null },
+      { name: "Reverse Linked List II", diff: "medium", lc: 92, tip: null },
+      { name: "Swap Nodes in Pairs", diff: "medium", lc: 24, tip: null },
+      { name: "Reverse Nodes in k-Group", diff: "hard", lc: 25, tip: null },
+      { name: "Reorder List", diff: "medium", lc: 143, tip: null },
+      { name: "Rotate List", diff: "medium", lc: 61, tip: null },
+      { name: "Reverse Nodes in Even Length Groups", diff: "medium", lc: 2074, tip: null },
+    ],
+    practice: [
+      { name: "Palindrome Linked List", diff: "easy", lc: 234, tip: null },
+      { name: "Odd Even Linked List", diff: "medium", lc: 328, tip: null },
+      { name: "Add Two Numbers", diff: "medium", lc: 2, tip: null },
+      { name: "Add Two Numbers II", diff: "medium", lc: 445, tip: null },
+      { name: "Maximum Twin Sum of a Linked List", diff: "medium", lc: 2130, tip: null },
+      { name: "Swapping Nodes in a Linked List", diff: "medium", lc: 1721, tip: null },
+      { name: "Sort List", diff: "medium", lc: 148, tip: null },
+      { name: "Reverse Alternating K-Nodes in Linked List", diff: "medium", lc: 1721, tip: null },
+      { name: "Insert Greatest Common Divisors in Linked List", diff: "medium", lc: 2807, tip: null },
+      { name: "Delete the Middle Node of a Linked List", diff: "medium", lc: 2095, tip: null },
+    ],
+    hard: [
+      { name: "Reverse Nodes in k-Group", diff: "hard", lc: 25, tip: "Check k nodes ahead exist before reversing. After reversing a group, connect prev group's tail to new head, and current tail to next group's head." },
+      { name: "Merge k Sorted Lists", diff: "hard", lc: 23, tip: "Use a min-heap of (value, node). Pop min, add to result, push next node from that list. O(N log k)." },
+      { name: "Copy List with Random Pointer", diff: "medium", lc: 138, tip: "Interleave cloned nodes between original nodes: A→A'→B→B'. Set random pointers using node.next.random = node.random.next. Then separate the two lists." },
+    ]
+  },
+  {
+    id: 6, name: "Monotonic Stack",
+    learn: [
+      { name: "Next Greater Element I", diff: "easy", lc: 496, tip: null },
+      { name: "Next Greater Element II", diff: "medium", lc: 503, tip: null },
+      { name: "Daily Temperatures", diff: "medium", lc: 739, tip: null },
+      { name: "Online Stock Span", diff: "medium", lc: 901, tip: null },
+      { name: "Sum of Subarray Minimums", diff: "medium", lc: 907, tip: null },
+      { name: "Remove Duplicate Letters", diff: "medium", lc: 316, tip: null },
+      { name: "132 Pattern", diff: "medium", lc: 456, tip: null },
+    ],
+    practice: [
+      { name: "Largest Rectangle in Histogram", diff: "hard", lc: 84, tip: null },
+      { name: "Trapping Rain Water", diff: "hard", lc: 42, tip: null },
+      { name: "Maximal Rectangle", diff: "hard", lc: 85, tip: null },
+      { name: "Number of Visible People in a Queue", diff: "hard", lc: 1944, tip: null },
+      { name: "Final Prices With a Special Discount in a Shop", diff: "easy", lc: 1475, tip: null },
+      { name: "Previous Smaller Element (custom)", diff: "medium", lc: 503, tip: null },
+      { name: "Validate Stack Sequences", diff: "medium", lc: 946, tip: null },
+      { name: "Asteroid Collision", diff: "medium", lc: 735, tip: null },
+      { name: "Remove K Digits", diff: "medium", lc: 402, tip: null },
+      { name: "Create Maximum Number", diff: "hard", lc: 321, tip: null },
+    ],
+    hard: [
+      { name: "Largest Rectangle in Histogram", diff: "hard", lc: 84, tip: "Push bar indices onto a monotonic increasing stack. When current < stack top, pop and compute area: height[popped] × (current - stack.top() - 1). Don't forget to drain the stack at the end." },
+      { name: "Maximum Width Ramp", diff: "medium", lc: 962, tip: "Build a decreasing stack of indices from left. Then sweep right-to-left: while stack top ≤ A[j], pop and update max width = j - stack.top()." },
+      { name: "Number of People That Can Be Seen in a Grid", diff: "hard", lc: 2282, tip: "Process each row right to left with a decreasing monotonic stack. For each person, count how many they can see before being blocked by a taller one." },
+    ]
+  },
+  {
+    id: 7, name: "Top K Elements",
+    learn: [
+      { name: "Kth Largest Element in an Array", diff: "medium", lc: 215, tip: null },
+      { name: "Top K Frequent Elements", diff: "medium", lc: 347, tip: null },
+      { name: "K Closest Points to Origin", diff: "medium", lc: 973, tip: null },
+      { name: "Kth Largest Element in a Stream", diff: "easy", lc: 703, tip: null },
+      { name: "Kth Smallest Element in a Sorted Matrix", diff: "medium", lc: 378, tip: null },
+      { name: "Sort Characters By Frequency", diff: "medium", lc: 451, tip: null },
+      { name: "Reorganize String", diff: "medium", lc: 767, tip: null },
+    ],
+    practice: [
+      { name: "Find Median from Data Stream", diff: "hard", lc: 295, tip: null },
+      { name: "Merge K Sorted Lists", diff: "hard", lc: 23, tip: null },
+      { name: "Task Scheduler", diff: "medium", lc: 621, tip: null },
+      { name: "K Pairs with Smallest Sums", diff: "medium", lc: 373, tip: null },
+      { name: "The K Weakest Rows in a Matrix", diff: "easy", lc: 1337, tip: null },
+      { name: "Smallest Range Covering Elements from K Lists", diff: "hard", lc: 632, tip: null },
+      { name: "Top K Frequent Words", diff: "medium", lc: 692, tip: null },
+      { name: "Furthest Building You Can Reach", diff: "medium", lc: 1642, tip: null },
+      { name: "Seat Reservation Manager", diff: "medium", lc: 1845, tip: null },
+      { name: "Maximum Subsequence Score", diff: "medium", lc: 2542, tip: null },
+    ],
+    hard: [
+      { name: "Find Median from Data Stream", diff: "hard", lc: 295, tip: "Use two heaps: max-heap for lower half, min-heap for upper half. Balance so sizes differ by ≤ 1. Median = top of larger heap or avg of both tops." },
+      { name: "Sliding Window Median", diff: "hard", lc: 480, tip: "Extend the two-heap approach with lazy deletion. Mark removed elements in a set; only truly 'count' elements still in the window when reading medians." },
+      { name: "IPO", diff: "hard", lc: 502, tip: "Sort projects by capital. Use a pointer to add all affordable projects to a max-heap by profit. Greedily pick the highest profit k times, updating capital each time." },
+    ]
+  },
+  {
+    id: 8, name: "Overlapping Intervals",
+    learn: [
+      { name: "Merge Intervals", diff: "medium", lc: 56, tip: null },
+      { name: "Insert Interval", diff: "medium", lc: 57, tip: null },
+      { name: "Non-overlapping Intervals", diff: "medium", lc: 435, tip: null },
+      { name: "Meeting Rooms", diff: "easy", lc: 252, tip: null },
+      { name: "Meeting Rooms II", diff: "medium", lc: 253, tip: null },
+      { name: "Minimum Number of Arrows to Burst Balloons", diff: "medium", lc: 452, tip: null },
+      { name: "Car Pooling", diff: "medium", lc: 1094, tip: null },
+    ],
+    practice: [
+      { name: "Interval List Intersections", diff: "medium", lc: 986, tip: null },
+      { name: "Employee Free Time", diff: "hard", lc: 759, tip: null },
+      { name: "My Calendar I", diff: "medium", lc: 729, tip: null },
+      { name: "My Calendar II", diff: "medium", lc: 731, tip: null },
+      { name: "Count of Meetings in All Rooms", diff: "medium", lc: 2402, tip: null },
+      { name: "Divide Intervals Into Minimum Number of Groups", diff: "medium", lc: 2406, tip: null },
+      { name: "Remove Covered Intervals", diff: "medium", lc: 1288, tip: null },
+      { name: "Minimum Interval to Include Each Query", diff: "hard", lc: 1851, tip: null },
+      { name: "Number of Flowers in Full Bloom", diff: "hard", lc: 2251, tip: null },
+      { name: "Count Ways to Group Overlapping Ranges", diff: "medium", lc: 2580, tip: null },
+    ],
+    hard: [
+      { name: "Employee Free Time", diff: "hard", lc: 759, tip: "Flatten all intervals, sort by start. Walk through and collect gaps between consecutive intervals. A gap [prev.end, curr.start] is a free time slot." },
+      { name: "Minimum Interval to Include Each Query", diff: "hard", lc: 1851, tip: "Sort intervals and queries. Process queries in sorted order. Use a min-heap of (size, end). Add all intervals starting ≤ query, remove all that ended before query, answer = heap top." },
+      { name: "My Calendar III", diff: "hard", lc: 732, tip: "Use a difference array / TreeMap. For each booking [s,e]: diff[s]++ and diff[e]--. After each booking, sweep through and track running max of prefix sums." },
+    ]
+  },
+  {
+    id: 9, name: "Modified Binary Search",
+    learn: [
+      { name: "Binary Search", diff: "easy", lc: 704, tip: null },
+      { name: "Search Insert Position", diff: "easy", lc: 35, tip: null },
+      { name: "Find Minimum in Rotated Sorted Array", diff: "medium", lc: 153, tip: null },
+      { name: "Search in Rotated Sorted Array", diff: "medium", lc: 33, tip: null },
+      { name: "Find Peak Element", diff: "medium", lc: 162, tip: null },
+      { name: "Koko Eating Bananas", diff: "medium", lc: 875, tip: null },
+      { name: "Capacity To Ship Packages Within D Days", diff: "medium", lc: 1011, tip: null },
+    ],
+    practice: [
+      { name: "Search a 2D Matrix", diff: "medium", lc: 74, tip: null },
+      { name: "Find First and Last Position of Element in Sorted Array", diff: "medium", lc: 34, tip: null },
+      { name: "Time Based Key-Value Store", diff: "medium", lc: 981, tip: null },
+      { name: "Search in Rotated Sorted Array II", diff: "medium", lc: 81, tip: null },
+      { name: "Find Minimum in Rotated Sorted Array II", diff: "hard", lc: 154, tip: null },
+      { name: "Single Element in a Sorted Array", diff: "medium", lc: 540, tip: null },
+      { name: "Minimum Number of Days to Make m Bouquets", diff: "medium", lc: 1482, tip: null },
+      { name: "Split Array Largest Sum", diff: "hard", lc: 410, tip: null },
+      { name: "Find the Smallest Divisor Given a Threshold", diff: "medium", lc: 1283, tip: null },
+      { name: "Minimum Speed to Arrive on Time", diff: "medium", lc: 1870, tip: null },
+    ],
+    hard: [
+      { name: "Median of Two Sorted Arrays", diff: "hard", lc: 4, tip: "Binary search on the smaller array's partition. Ensure left half has (m+n+1)/2 elements. Valid partition: maxLeft1 ≤ minRight2 and maxLeft2 ≤ minRight1." },
+      { name: "Find in Mountain Array", diff: "hard", lc: 1095, tip: "First binary search for the peak. Then binary search the ascending side, then the descending side. Be careful with the peak index bounds." },
+      { name: "Minimize Max Distance to Gas Station", diff: "hard", lc: 774, tip: "Binary search on the answer (a float). For a given max distance D, check if you can insert ≤ K stations: count = sum of ceil(gap/D) - 1 for each gap." },
+    ]
+  },
+  {
+    id: 10, name: "Binary Tree Traversal",
+    learn: [
+      { name: "Binary Tree Inorder Traversal", diff: "easy", lc: 94, tip: null },
+      { name: "Binary Tree Preorder Traversal", diff: "easy", lc: 144, tip: null },
+      { name: "Binary Tree Postorder Traversal", diff: "easy", lc: 145, tip: null },
+      { name: "Binary Tree Level Order Traversal", diff: "medium", lc: 102, tip: null },
+      { name: "Binary Tree Zigzag Level Order Traversal", diff: "medium", lc: 103, tip: null },
+      { name: "Validate Binary Search Tree", diff: "medium", lc: 98, tip: null },
+      { name: "Symmetric Tree", diff: "easy", lc: 101, tip: null },
+    ],
+    practice: [
+      { name: "Average of Levels in Binary Tree", diff: "easy", lc: 637, tip: null },
+      { name: "Binary Tree Right Side View", diff: "medium", lc: 199, tip: null },
+      { name: "Cousins in Binary Tree", diff: "easy", lc: 993, tip: null },
+      { name: "Maximum Width of Binary Tree", diff: "medium", lc: 662, tip: null },
+      { name: "Find Largest Value in Each Tree Row", diff: "medium", lc: 515, tip: null },
+      { name: "Deepest Leaves Sum", diff: "medium", lc: 1302, tip: null },
+      { name: "Binary Tree Level Order Traversal II", diff: "medium", lc: 107, tip: null },
+      { name: "Populate Next Right Pointers in Each Node", diff: "medium", lc: 116, tip: null },
+      { name: "N-ary Tree Level Order Traversal", diff: "medium", lc: 429, tip: null },
+      { name: "Vertical Order Traversal of a Binary Tree", diff: "hard", lc: 987, tip: null },
+    ],
+    hard: [
+      { name: "Recover Binary Search Tree", diff: "hard", lc: 99, tip: "Inorder traversal should be sorted. Find the two swapped nodes: first is where prev > curr (first occurrence), second is where it happens again (or same spot). Swap their values." },
+      { name: "Vertical Order Traversal of a Binary Tree", diff: "hard", lc: 987, tip: "DFS collecting (col, row, val) for each node. Sort by col, then row, then val. Group by col to build result." },
+      { name: "Binary Tree Cameras", diff: "hard", lc: 968, tip: "Postorder DFS. Each node returns: 0=needs coverage, 1=has camera, 2=covered. Place cameras greedily at nodes whose children need coverage." },
+    ]
+  },
+  {
+    id: 11, name: "Depth-First Search (DFS)",
+    learn: [
+      { name: "Maximum Depth of Binary Tree", diff: "easy", lc: 104, tip: null },
+      { name: "Path Sum", diff: "easy", lc: 112, tip: null },
+      { name: "Number of Islands", diff: "medium", lc: 200, tip: null },
+      { name: "Clone Graph", diff: "medium", lc: 133, tip: null },
+      { name: "Flood Fill", diff: "easy", lc: 733, tip: null },
+      { name: "Course Schedule", diff: "medium", lc: 207, tip: null },
+      { name: "Pacific Atlantic Water Flow", diff: "medium", lc: 417, tip: null },
+    ],
+    practice: [
+      { name: "Diameter of Binary Tree", diff: "easy", lc: 543, tip: null },
+      { name: "Longest Increasing Path in a Matrix", diff: "hard", lc: 329, tip: null },
+      { name: "Graph Valid Tree", diff: "medium", lc: 261, tip: null },
+      { name: "Number of Connected Components in an Undirected Graph", diff: "medium", lc: 323, tip: null },
+      { name: "Path Sum II", diff: "medium", lc: 113, tip: null },
+      { name: "All Paths From Source to Target", diff: "medium", lc: 797, tip: null },
+      { name: "Keys and Rooms", diff: "medium", lc: 841, tip: null },
+      { name: "Surrounded Regions", diff: "medium", lc: 130, tip: null },
+      { name: "Count Sub Islands", diff: "medium", lc: 1905, tip: null },
+      { name: "Find Eventual Safe States", diff: "medium", lc: 802, tip: null },
+    ],
+    hard: [
+      { name: "Longest Increasing Path in a Matrix", diff: "hard", lc: 329, tip: "DFS with memoization. From each cell, explore 4 directions only if strictly increasing. Cache result for each cell — it's safe because paths are DAGs (strictly increasing = no cycles)." },
+      { name: "Critical Connections in a Network", diff: "hard", lc: 1192, tip: "Tarjan's bridge-finding algorithm. Track disc[] and low[]. An edge (u,v) is a bridge if low[v] > disc[u], meaning v cannot reach u or earlier without going through this edge." },
+      { name: "Number of Distinct Islands", diff: "medium", lc: 694, tip: "DFS and record the path signature as a string (R, L, U, D, B for backtrack). Normalize by subtracting the starting cell's position. Store unique signatures in a HashSet." },
+    ]
+  },
+  {
+    id: 12, name: "Breadth-First Search (BFS)",
+    learn: [
+      { name: "Binary Tree Level Order Traversal", diff: "medium", lc: 102, tip: null },
+      { name: "Rotting Oranges", diff: "medium", lc: 994, tip: null },
+      { name: "01 Matrix", diff: "medium", lc: 542, tip: null },
+      { name: "Shortest Path in Binary Matrix", diff: "medium", lc: 1091, tip: null },
+      { name: "Walls and Gates", diff: "medium", lc: 286, tip: null },
+      { name: "Word Ladder", diff: "hard", lc: 127, tip: null },
+      { name: "As Far from Land as Possible", diff: "medium", lc: 1162, tip: null },
+    ],
+    practice: [
+      { name: "Minimum Depth of Binary Tree", diff: "easy", lc: 111, tip: null },
+      { name: "Jump Game III", diff: "medium", lc: 1306, tip: null },
+      { name: "Nearest Exit from Entrance in Maze", diff: "medium", lc: 1926, tip: null },
+      { name: "Minimum Knight Moves", diff: "medium", lc: 1197, tip: null },
+      { name: "Open the Lock", diff: "medium", lc: 752, tip: null },
+      { name: "Snakes and Ladders", diff: "medium", lc: 909, tip: null },
+      { name: "Shortest Bridge", diff: "medium", lc: 934, tip: null },
+      { name: "Map of Highest Peak", diff: "medium", lc: 1765, tip: null },
+      { name: "Bus Routes", diff: "hard", lc: 815, tip: null },
+      { name: "Cut Off Trees for Golf Event", diff: "hard", lc: 675, tip: null },
+    ],
+    hard: [
+      { name: "Word Ladder II", diff: "hard", lc: 126, tip: "BFS to find shortest path length + build a graph of valid next-hop words. Then DFS/backtrack from end to start along the BFS layer graph to collect all shortest paths." },
+      { name: "Minimum Cost to Make at Least One Valid Path in a Grid", diff: "hard", lc: 1368, tip: "0-1 BFS (deque). Moving in the arrow's direction costs 0 (push front), against costs 1 (push back). Dijkstra or deque both work here." },
+      { name: "Shortest Path to Get All Keys", diff: "hard", lc: 864, tip: "BFS with state = (row, col, keys_bitmask). Keys collected so far are part of the state. Use a visited set of (r, c, keys) to avoid revisiting." },
+    ]
+  },
+  {
+    id: 13, name: "Matrix Traversal",
+    learn: [
+      { name: "Number of Islands", diff: "medium", lc: 200, tip: null },
+      { name: "Flood Fill", diff: "easy", lc: 733, tip: null },
+      { name: "Max Area of Island", diff: "medium", lc: 695, tip: null },
+      { name: "Surrounded Regions", diff: "medium", lc: 130, tip: null },
+      { name: "Pacific Atlantic Water Flow", diff: "medium", lc: 417, tip: null },
+      { name: "Word Search", diff: "medium", lc: 79, tip: null },
+      { name: "Number of Closed Islands", diff: "medium", lc: 1254, tip: null },
+    ],
+    practice: [
+      { name: "Shortest Path in Binary Matrix", diff: "medium", lc: 1091, tip: null },
+      { name: "01 Matrix", diff: "medium", lc: 542, tip: null },
+      { name: "Count Sub Islands", diff: "medium", lc: 1905, tip: null },
+      { name: "Rotting Oranges", diff: "medium", lc: 994, tip: null },
+      { name: "Map of Highest Peak", diff: "medium", lc: 1765, tip: null },
+      { name: "Number of Enclaves", diff: "medium", lc: 1020, tip: null },
+      { name: "Island Perimeter", diff: "easy", lc: 463, tip: null },
+      { name: "Number of Distinct Islands", diff: "medium", lc: 694, tip: null },
+      { name: "Minimum Number of Days to Disconnect Island", diff: "hard", lc: 1568, tip: null },
+      { name: "Making A Large Island", diff: "hard", lc: 827, tip: null },
+    ],
+    hard: [
+      { name: "Longest Increasing Path in a Matrix", diff: "hard", lc: 329, tip: "DFS + memoization. Since paths are strictly increasing, there are no cycles — memo is safe. For each cell, try all 4 directions and cache the longest path." },
+      { name: "Making A Large Island", diff: "hard", lc: 827, tip: "Label each island with a unique ID and store its size. For each 0-cell, look at 4 neighbors, collect unique island IDs, sum their sizes + 1. Take the max." },
+      { name: "Zuma Game", diff: "hard", lc: 488, tip: "BFS/DFS + memoization on (board_state, hand_state). At each step, try inserting each ball from hand at each position. Prune impossible states early." },
+    ]
+  },
+  {
+    id: 14, name: "Backtracking",
+    learn: [
+      { name: "Subsets", diff: "medium", lc: 78, tip: null },
+      { name: "Permutations", diff: "medium", lc: 46, tip: null },
+      { name: "Combination Sum", diff: "medium", lc: 39, tip: null },
+      { name: "Generate Parentheses", diff: "medium", lc: 22, tip: null },
+      { name: "Letter Combinations of a Phone Number", diff: "medium", lc: 17, tip: null },
+      { name: "Subsets II", diff: "medium", lc: 90, tip: null },
+      { name: "Permutations II", diff: "medium", lc: 47, tip: null },
+    ],
+    practice: [
+      { name: "Combination Sum II", diff: "medium", lc: 40, tip: null },
+      { name: "Palindrome Partitioning", diff: "medium", lc: 131, tip: null },
+      { name: "Word Search", diff: "medium", lc: 79, tip: null },
+      { name: "N-Queens", diff: "hard", lc: 51, tip: null },
+      { name: "Combinations", diff: "medium", lc: 77, tip: null },
+      { name: "Path Sum II", diff: "medium", lc: 113, tip: null },
+      { name: "Restore IP Addresses", diff: "medium", lc: 93, tip: null },
+      { name: "Expression Add Operators", diff: "hard", lc: 282, tip: null },
+      { name: "Letter Case Permutation", diff: "medium", lc: 784, tip: null },
+      { name: "Sudoku Solver", diff: "hard", lc: 37, tip: null },
+    ],
+    hard: [
+      { name: "N-Queens II", diff: "hard", lc: 52, tip: "Track attacked columns, diagonals (r-c), and anti-diagonals (r+c) with sets. At each row, try valid columns only. Count solutions." },
+      { name: "Word Search II", diff: "hard", lc: 212, tip: "Build a Trie from all words. DFS on grid, traverse Trie simultaneously. When a Trie node has a word ending, record it. Prune visited cells with a marker." },
+      { name: "Regular Expression Matching", diff: "hard", lc: 10, tip: "Backtracking or DP. For '*': either skip the pattern (zero matches) or consume a char from s if it matches p[i-1]. DP[i][j] = does s[0..i] match p[0..j]?" },
+    ]
+  },
+  {
+    id: 15, name: "Dynamic Programming",
+    learn: [
+      { name: "Climbing Stairs", diff: "easy", lc: 70, tip: null },
+      { name: "House Robber", diff: "medium", lc: 198, tip: null },
+      { name: "Coin Change", diff: "medium", lc: 322, tip: null },
+      { name: "Longest Common Subsequence", diff: "medium", lc: 1143, tip: null },
+      { name: "Longest Increasing Subsequence", diff: "medium", lc: 300, tip: null },
+      { name: "Unique Paths", diff: "medium", lc: 62, tip: null },
+      { name: "Jump Game", diff: "medium", lc: 55, tip: null },
+    ],
+    practice: [
+      { name: "Edit Distance", diff: "medium", lc: 72, tip: null },
+      { name: "Partition Equal Subset Sum", diff: "medium", lc: 416, tip: null },
+      { name: "House Robber II", diff: "medium", lc: 213, tip: null },
+      { name: "Decode Ways", diff: "medium", lc: 91, tip: null },
+      { name: "Word Break", diff: "medium", lc: 139, tip: null },
+      { name: "Maximum Product Subarray", diff: "medium", lc: 152, tip: null },
+      { name: "Coin Change II", diff: "medium", lc: 518, tip: null },
+      { name: "Longest Palindromic Subsequence", diff: "medium", lc: 516, tip: null },
+      { name: "Target Sum", diff: "medium", lc: 494, tip: null },
+      { name: "Minimum Path Sum", diff: "medium", lc: 64, tip: null },
+    ],
+    hard: [
+      { name: "Burst Balloons", diff: "hard", lc: 312, tip: "Think backwards: instead of which balloon to pop first, think which to pop LAST in range [i,j]. dp[i][j] = max coins when last balloon in range is k. dp[i][j] = max(nums[i-1]*nums[k]*nums[j+1] + dp[i][k-1] + dp[k+1][j])." },
+      { name: "Regular Expression Matching", diff: "hard", lc: 10, tip: "dp[i][j] = s[0..i-1] matches p[0..j-1]. For '*': dp[i][j] = dp[i][j-2] (skip) OR (s[i]==p[j-1] and dp[i-1][j]) (extend). Build bottom-up." },
+      { name: "Edit Distance II - Minimum Edit with Constraints", diff: "hard", lc: 72, tip: "Classic Levenshtein: dp[i][j] = min edits for s[0..i] and t[0..j]. If chars match: dp[i][j]=dp[i-1][j-1]. Else: 1+min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) = delete, insert, replace." },
+    ]
+  }
+];
+
+const STORAGE_KEY = 'dsa_tracker_v2';
+
+function loadState() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch { return {}; }
+}
+
+function saveState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+let state = loadState();
+
+function getProblemKey(patternId, phase, idx) {
+  return `p${patternId}_${phase}_${idx}`;
+}
+
+function isChecked(patternId, phase, idx) {
+  return !!state[getProblemKey(patternId, phase, idx)];
+}
+
+function toggleCheck(patternId, phase, idx) {
+  const key = getProblemKey(patternId, phase, idx);
+  state[key] = !state[key];
+  saveState(state);
+  render();
+}
+
+function countDone(patternId, phase, total) {
+  let count = 0;
+  for (let i = 0; i < total; i++) {
+    if (isChecked(patternId, phase, i)) count++;
+  }
+  return count;
+}
+
+function countAllDone(patternId) {
+  return countDone(patternId,'learn',7) + countDone(patternId,'practice',10) + countDone(patternId,'hard',3);
+}
+
+let openPatterns = new Set([1]); // first open by default
+
+function render() {
+  const container = document.getElementById('patterns-container');
+
+  // Stats
+  let totalLearn = 0, totalPractice = 0, totalHard = 0;
+  PATTERNS.forEach(p => {
+    totalLearn += countDone(p.id, 'learn', 7);
+    totalPractice += countDone(p.id, 'practice', 10);
+    totalHard += countDone(p.id, 'hard', 3);
+  });
+  const total = totalLearn + totalPractice + totalHard;
+  const pct = Math.round((total / 300) * 100);
+
+  document.getElementById('stat-learn').textContent = `${totalLearn}/105`;
+  document.getElementById('stat-practice').textContent = `${totalPractice}/150`;
+  document.getElementById('stat-hard').textContent = `${totalHard}/45`;
+  document.getElementById('stat-total').textContent = `${total}/300`;
+  document.getElementById('global-bar').style.width = pct + '%';
+  document.getElementById('global-pct').textContent = pct + '%';
+
+  container.innerHTML = PATTERNS.map(p => renderPattern(p)).join('');
+
+  // Bind events
+  PATTERNS.forEach(p => {
+    // Header click
+    document.getElementById(`header-${p.id}`).addEventListener('click', () => {
+      if (openPatterns.has(p.id)) openPatterns.delete(p.id);
+      else openPatterns.add(p.id);
+      render();
+    });
+
+    // Problem clicks
+    ['learn','practice','hard'].forEach((phase, phaseIdx) => {
+      const arr = phase === 'learn' ? p.learn : phase === 'practice' ? p.practice : p.hard;
+      arr.forEach((prob, idx) => {
+        const rowEl = document.getElementById(`row-${p.id}-${phase}-${idx}`);
+        if (rowEl) {
+          rowEl.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tip-toggle') || e.target.classList.contains('lc-link')) return;
+            toggleCheck(p.id, phase, idx);
+          });
+        }
+        if (prob.tip) {
+          const btn = document.getElementById(`tip-btn-${p.id}-${phase}-${idx}`);
+          const box = document.getElementById(`tip-box-${p.id}-${phase}-${idx}`);
+          if (btn && box) {
+            btn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              box.classList.toggle('visible');
+              btn.textContent = box.classList.contains('visible') ? '▲ hide tip' : '▼ show tip';
+            });
+          }
+        }
+      });
+    });
+  });
+}
+
+function renderPattern(p) {
+  const done = countAllDone(p.id);
+  const pct = Math.round((done / 20) * 100);
+  const isOpen = openPatterns.has(p.id);
+  const isComplete = done === 20;
+
+  return `
+    <div class="pattern-card ${isOpen ? 'open' : ''} ${isComplete ? 'completed' : ''}">
+      <div class="pattern-header" id="header-${p.id}">
+        <span class="pattern-num">${String(p.id).padStart(2,'0')}</span>
+        <span class="pattern-name">${p.name}</span>
+        <div class="pattern-progress">
+          <div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div>
+          <span class="mini-count">${done}/20</span>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="pattern-body">
+        ${renderPhase(p, 'learn', p.learn, '01–07', 'Study & Copy', 'Read the solution, understand the pattern, copy and annotate it.')}
+        ${renderPhase(p, 'practice', p.practice, '08–17', 'Medium Practice', 'Apply the templates from phase 1. No copying — try from memory.')}
+        ${renderPhase(p, 'hard', p.hard, '18–20', 'Challenge', 'These need a nudge. Expand the tip before you look at solutions.')}
+        <button class="reset-btn" onclick="resetPattern(${p.id})">↺ Reset pattern progress</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderPhase(p, phase, problems, range, label, desc) {
+  return `
+    <div class="phase-section phase-${phase}">
+      <div class="phase-header">
+        <span class="phase-badge">${range} · ${label}</span>
+        <span class="phase-desc">${desc}</span>
+      </div>
+      ${problems.map((prob, idx) => renderProblem(p, phase, prob, idx)).join('')}
+    </div>
+  `;
+}
+
+function renderProblem(p, phase, prob, idx) {
+  const done = isChecked(p.id, phase, idx);
+  return `
+    <div class="problem-row ${done ? 'done' : ''}" id="row-${p.id}-${phase}-${idx}">
+      <div class="check-box">${done ? '✓' : ''}</div>
+      <div class="problem-content">
+        <div class="problem-name">${prob.name}</div>
+        <div class="problem-meta">
+          <span class="diff-badge diff-${prob.diff}">${prob.diff}</span>
+          <a class="lc-link" href="https://leetcode.com/problems/" target="_blank" onclick="event.stopPropagation()">LC #${prob.lc} ↗</a>
+        </div>
+        ${prob.tip ? `
+          <button class="tip-toggle" id="tip-btn-${p.id}-${phase}-${idx}">▼ show tip</button>
+          <div class="tip-box" id="tip-box-${p.id}-${phase}-${idx}">${prob.tip}</div>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function resetPattern(id) {
+  if (!confirm(`Reset all progress for this pattern?`)) return;
+  Object.keys(state).forEach(k => {
+    if (k.startsWith(`p${id}_`)) delete state[k];
+  });
+  saveState(state);
+  render();
+}
+
+function expandAll() {
+  PATTERNS.forEach(p => openPatterns.add(p.id));
+  render();
+}
+function collapseAll() {
+  openPatterns.clear();
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
