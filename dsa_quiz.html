@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DSA Quiz – 500 MCQ Questions</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+header{background:#1e293b;padding:1rem 2rem;border-bottom:2px solid #3b82f6;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+header h1{font-size:1.4rem;color:#60a5fa}
+#controls{display:flex;gap:.5rem;flex-wrap:wrap;padding:1rem 2rem;background:#1e293b;border-bottom:1px solid #334155}
+select,button{padding:.4rem .8rem;border-radius:.4rem;border:1px solid #475569;background:#0f172a;color:#e2e8f0;font-size:.85rem;cursor:pointer}
+button:hover{background:#3b82f6;border-color:#3b82f6}
+#stats{padding:.5rem 2rem;background:#162032;font-size:.85rem;color:#94a3b8;display:flex;gap:1.5rem;flex-wrap:wrap;border-bottom:1px solid #1e293b}
+#quiz-area{padding:1.5rem 2rem;max-width:900px;margin:0 auto}
+.question-card{background:#1e293b;border-radius:.75rem;padding:1.5rem;margin-bottom:1.5rem;border-left:4px solid #3b82f6;position:relative}
+.question-card.correct{border-left-color:#22c55e}
+.question-card.wrong{border-left-color:#ef4444}
+.q-header{display:flex;gap:.5rem;align-items:center;margin-bottom:.75rem;flex-wrap:wrap}
+.q-num{font-size:.75rem;background:#0f172a;padding:.2rem .5rem;border-radius:.3rem;color:#64748b}
+.q-topic{font-size:.75rem;background:#1d4ed8;padding:.2rem .5rem;border-radius:.3rem;color:#bfdbfe}
+.q-diff{font-size:.75rem;padding:.2rem .5rem;border-radius:.3rem}
+.q-diff.Easy{background:#14532d;color:#86efac}
+.q-diff.Medium{background:#713f12;color:#fde68a}
+.q-diff.Hard{background:#7f1d1d;color:#fca5a5}
+.question-text{font-size:1rem;line-height:1.6;margin-bottom:1rem;color:#f1f5f9}
+.options{display:grid;gap:.5rem}
+.option-btn{text-align:left;padding:.6rem 1rem;border-radius:.4rem;border:1px solid #334155;background:#0f172a;color:#cbd5e1;cursor:pointer;transition:all .2s;font-size:.9rem}
+.option-btn:hover:not(:disabled){background:#1d4ed8;border-color:#3b82f6;color:#fff}
+.option-btn.selected{background:#1e40af;border-color:#60a5fa;color:#fff}
+.option-btn.correct-ans{background:#166534;border-color:#22c55e;color:#dcfce7}
+.option-btn.wrong-ans{background:#991b1b;border-color:#ef4444;color:#fee2e2}
+.explanation{margin-top:.75rem;padding:.75rem;background:#0f172a;border-radius:.4rem;font-size:.85rem;color:#94a3b8;display:none}
+.explanation.show{display:block}
+#score-board{text-align:center;padding:2rem;background:#1e293b;border-radius:.75rem;margin:1rem 2rem}
+#score-board h2{font-size:2rem;color:#60a5fa}
+#score-board p{margin:.5rem 0;color:#94a3b8}
+.progress-bar{width:100%;height:8px;background:#334155;border-radius:4px;overflow:hidden;margin:.5rem 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);transition:width .3s}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧠 DSA MCQ Quiz – 500 Questions</h1>
+  <div id="score-display" style="font-size:.9rem;color:#94a3b8">Score: <span id="sc">0</span> / <span id="tot">0</span></div>
+</header>
+<div id="controls">
+  <select id="topicFilter"><option value="All">All Topics</option></select>
+  <select id="diffFilter"><option value="All">All Difficulties</option><option>Easy</option><option>Medium</option><option>Hard</option></select>
+  <button onclick="applyFilters()">Filter</button>
+  <button onclick="shuffleAndReset()">🔀 Shuffle</button>
+  <button onclick="resetAll()">↺ Reset All</button>
+  <button onclick="showScore()">📊 Score</button>
+</div>
+<div id="stats">
+  <span>Showing: <b id="showing">0</b> questions</span>
+  <span>Answered: <b id="answered">0</b></span>
+  <span>Correct: <b id="correct-count">0</b></span>
+  <span>Wrong: <b id="wrong-count">0</b></span>
+</div>
+<div id="quiz-area"></div>
+
+<script>
+const ALL_QUESTIONS = [
+// ─── ARRAYS ──────────────────────────────────────────────────────────────────
+{t:"Arrays",d:"Easy",q:"What is the time complexity of accessing an element by index in an array?",o:["O(n)","O(log n)","O(1)","O(n²)"],a:2,e:"Array elements are stored contiguously in memory, so direct index access is O(1)."},
+{t:"Arrays",d:"Easy",q:"Which of the following is NOT a valid operation on a static array?",o:["Access by index","Dynamic resizing","Traverse","Search"],a:1,e:"Static arrays have fixed size; dynamic resizing is a feature of dynamic arrays or lists."},
+{t:"Arrays",d:"Easy",q:"What is the worst-case time complexity for linear search in an unsorted array?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:2,e:"In the worst case you inspect every element, giving O(n)."},
+{t:"Arrays",d:"Easy",q:"In a 0-indexed array of size n, what is the index of the last element?",o:["n","n-1","n+1","n/2"],a:1,e:"0-indexed arrays run from index 0 to n-1."},
+{t:"Arrays",d:"Easy",q:"Which operation shifts all elements one position to the right?",o:["Append","Insert at beginning","Delete last","Swap"],a:1,e:"Inserting at the beginning requires shifting all existing elements right by one position."},
+{t:"Arrays",d:"Easy",q:"What is the space complexity of an array of n elements?",o:["O(1)","O(log n)","O(n)","O(n²)"],a:2,e:"Storing n elements requires O(n) space."},
+{t:"Arrays",d:"Easy",q:"Which sorting algorithm has best-case O(n) for nearly-sorted arrays?",o:["Selection Sort","Bubble Sort","Quick Sort","Merge Sort"],a:1,e:"Bubble Sort with early termination detects a sorted array in O(n) passes."},
+{t:"Arrays",d:"Medium",q:"Two Sum problem: given an unsorted array, find two indices summing to target. Best approach?",o:["Nested loops O(n²)","Sort then binary search O(n log n)","Hash map O(n)","Two pointers O(n log n)"],a:2,e:"A hash map stores complements for O(1) lookup, giving overall O(n) time."},
+{t:"Arrays",d:"Medium",q:"What does the sliding window technique optimize?",o:["Sorting arrays","Finding subarrays satisfying a condition","Binary search","Graph traversal"],a:1,e:"Sliding window maintains a window over the array, avoiding redundant recomputation."},
+{t:"Arrays",d:"Medium",q:"Kadane's algorithm solves which problem?",o:["Maximum subarray sum","Minimum subarray","Two sum","Rotate array"],a:0,e:"Kadane's algorithm finds the contiguous subarray with maximum sum in O(n)."},
+{t:"Arrays",d:"Medium",q:"To find duplicates in an array of n integers (values 1 to n) in O(n) time and O(1) space, which technique works?",o:["Hash set","Sorting","Index negation marking","Two pointers"],a:2,e:"Negate values at visited indices to mark presence without extra space."},
+{t:"Arrays",d:"Medium",q:"What is the time complexity of rotating an array by k positions using the reversal algorithm?",o:["O(n²)","O(n)","O(k)","O(n log n)"],a:1,e:"Three reversals each take O(n), so total is O(n)."},
+{t:"Arrays",d:"Medium",q:"Which approach finds the majority element (>n/2 occurrences) in O(n) time and O(1) space?",o:["Hash map","Sorting","Boyer-Moore Voting","Two pointers"],a:2,e:"Boyer-Moore Voting tracks a candidate and count, achieving O(n) time, O(1) space."},
+{t:"Arrays",d:"Medium",q:"To merge two sorted arrays in O(n+m) time without extra space, which pointer strategy is used?",o:["Start from beginning of both","Start from end of both","Random access","Use a stack"],a:1,e:"Starting from the end avoids element shifting and fills in place."},
+{t:"Arrays",d:"Hard",q:"Trapping rain water problem: what is the time complexity of the two-pointer approach?",o:["O(n²)","O(n log n)","O(n)","O(1)"],a:2,e:"Two pointers converge in one pass: O(n)."},
+{t:"Arrays",d:"Hard",q:"The 'Jump Game II' problem asks for minimum jumps to reach end. What is the greedy approach complexity?",o:["O(n²)","O(n)","O(n log n)","O(2^n)"],a:1,e:"Greedy tracks the farthest reachable position in one pass: O(n)."},
+{t:"Arrays",d:"Hard",q:"Given an array, find all triplets summing to zero (3Sum). What is the time complexity of the sort + two-pointer approach?",o:["O(n)","O(n log n)","O(n²)","O(n³)"],a:2,e:"Sorting is O(n log n), then for each element a two-pointer scan is O(n), total O(n²)."},
+{t:"Arrays",d:"Easy",q:"Which data structure is most appropriate when you need O(1) random access by index?",o:["Linked List","Hash Map","Array","Binary Tree"],a:2,e:"Arrays provide O(1) random access by index."},
+{t:"Arrays",d:"Easy",q:"What is the time complexity of deleting the last element of an array?",o:["O(1)","O(n)","O(log n)","O(n²)"],a:0,e:"Removing the last element just decrements the size pointer: O(1)."},
+{t:"Arrays",d:"Medium",q:"The Dutch National Flag algorithm solves which problem?",o:["Two Sum","Sort array of 0s, 1s, and 2s","Maximum subarray","Binary search"],a:1,e:"DNF partitions array into three groups in O(n) with O(1) extra space."},
+{t:"Arrays",d:"Medium",q:"Prefix sum array helps answer range sum queries in?",o:["O(n) per query","O(1) per query after O(n) preprocessing","O(log n) per query","O(n²) total"],a:1,e:"Precompute prefix sums in O(n), then each range query is O(1)."},
+{t:"Arrays",d:"Hard",q:"What is the time complexity of finding the median of two sorted arrays?",o:["O(n+m)","O((n+m) log(n+m))","O(log(min(n,m)))","O(n log m)"],a:2,e:"Binary search on the smaller array gives O(log(min(n,m)))."},
+{t:"Arrays",d:"Easy",q:"Which of the following correctly describes a 2D array in memory?",o:["Stored as a linked list of rows","Stored as a contiguous block (row-major or column-major)","Stored as a binary tree","Stored in random locations"],a:1,e:"2D arrays are stored contiguously in row-major or column-major order."},
+{t:"Arrays",d:"Medium",q:"Binary search on a sorted array has time complexity:",o:["O(n)","O(log n)","O(1)","O(n log n)"],a:1,e:"Binary search halves the search space each step: O(log n)."},
+{t:"Arrays",d:"Medium",q:"To find the next permutation of an array, what is the time complexity?",o:["O(1)","O(log n)","O(n)","O(n!)"],a:2,e:"Finding the next permutation requires at most two linear scans and a reverse: O(n)."},
+{t:"Arrays",d:"Hard",q:"Largest rectangle in histogram problem: what is the time complexity of the stack-based solution?",o:["O(n²)","O(n log n)","O(n)","O(log n)"],a:2,e:"A single pass with a stack processes each bar at most twice: O(n)."},
+{t:"Arrays",d:"Easy",q:"What does in-place array reversal require in extra space?",o:["O(n)","O(1)","O(log n)","O(n/2)"],a:1,e:"Swapping elements from both ends requires only a temporary variable: O(1)."},
+{t:"Arrays",d:"Medium",q:"Spiral matrix traversal visits how many elements?",o:["n","n²","2n","n log n"],a:1,e:"All n² elements of an n×n matrix are visited exactly once."},
+{t:"Arrays",d:"Medium",q:"Which algorithm finds the kth largest element in an unsorted array in average O(n)?",o:["Merge Sort","Binary Search","QuickSelect","Bubble Sort"],a:2,e:"QuickSelect uses partitioning to find the kth element in average O(n)."},
+{t:"Arrays",d:"Hard",q:"Count of smaller numbers after self: which data structure gives O(n log n) solution?",o:["Stack","Queue","Binary Indexed Tree (BIT/Fenwick)","Hash Map"],a:2,e:"A Fenwick tree allows prefix sum queries in O(log n), total O(n log n)."},
+{t:"Arrays",d:"Easy",q:"What is the result of arr[i] = arr[j]; arr[j] = arr[i]; (no temp variable) swap?",o:["Correct swap","arr[i] = arr[j], arr[j] = original arr[i]","arr[i] = arr[j], arr[j] = arr[j]","Undefined behavior"],a:2,e:"After arr[i]=arr[j], both hold the same value, so arr[j]=arr[i] is a no-op; no proper swap."},
+{t:"Arrays",d:"Medium",q:"Product of array except self without division in O(n): what is needed?",o:["Two passes (prefix and suffix products)","Sorting","Binary search","Stack"],a:0,e:"Compute prefix products left-to-right and suffix products right-to-left, multiply them."},
+{t:"Arrays",d:"Hard",q:"Minimum window substring problem time complexity (sliding window)?",o:["O(n²)","O(n*m)","O(n)","O(n log n)"],a:2,e:"Two pointers over the string with a character count map: O(n)."},
+{t:"Arrays",d:"Easy",q:"If an array has n elements and you access index n, what happens?",o:["Returns 0","Returns last element","Index out of bounds error","Returns garbage"],a:2,e:"Accessing index n (0-indexed) is out of bounds."},
+{t:"Arrays",d:"Medium",q:"Find single number in array where every other element appears twice. Best approach?",o:["Hash set","Sort and scan","XOR all elements","Counting sort"],a:2,e:"XOR of identical numbers is 0, leaving only the single number. O(n) time, O(1) space."},
+{t:"Arrays",d:"Easy",q:"Which of the following is true about dynamic arrays (like ArrayList)?",o:["Fixed size","Amortized O(1) append","Always O(n) append","Never resizes"],a:1,e:"Dynamic arrays double in size on overflow, giving amortized O(1) append."},
+{t:"Arrays",d:"Medium",q:"Find missing number in array of 1..n in O(n) without extra space?",o:["XOR approach","Sort and scan","Hash set","Prefix sum"],a:0,e:"XOR all indices and values; the missing number remains after cancellation."},
+{t:"Arrays",d:"Hard",q:"Longest consecutive sequence in unsorted array. O(n) approach uses?",o:["Sorting","Two pointers","Hash set for O(1) lookup","Binary search tree"],a:2,e:"Store all values in a hash set; start sequences only from elements with no left neighbor."},
+{t:"Arrays",d:"Medium",q:"Maximum product subarray problem: what extra state must be tracked compared to Kadane's?",o:["Only max product","Only min product","Both max and min product (negatives flip signs)","Sum"],a:2,e:"A large negative times a small negative becomes a large positive, so both max and min must be tracked."},
+{t:"Arrays",d:"Easy",q:"Time complexity of copying one array into another?",o:["O(1)","O(n)","O(log n)","O(n²)"],a:1,e:"Copying n elements is O(n)."},
+{t:"Arrays",d:"Easy",q:"Which Python built-in sorts a list in-place in O(n log n)?",o:["list.sort()","sorted()","list.reverse()","list.index()"],a:0,e:"list.sort() sorts in-place using Timsort: O(n log n)."},
+{t:"Arrays",d:"Medium",q:"Container with most water (two pointers). Why do we move the pointer with the shorter height?",o:["To increase width","Moving the taller side can only decrease area","Random choice","Shorter side limits height; moving it may find a taller boundary"],a:3,e:"The shorter side is the bottleneck; moving the taller side cannot improve the minimum height."},
+{t:"Arrays",d:"Hard",q:"Subarray sum equals k. Optimal time complexity?",o:["O(n²)","O(n)","O(n log n)","O(k)"],a:1,e:"Prefix sum + hash map stores cumulative sums, detecting target sum in O(1) per step."},
+{t:"Arrays",d:"Medium",q:"In-place matrix rotation (90° clockwise): what two steps are needed?",o:["Reverse rows, then transpose","Transpose, then reverse each row","Reverse columns, then rows","Sort each row"],a:1,e:"Transpose flips axes; reversing each row achieves 90° clockwise rotation."},
+{t:"Arrays",d:"Easy",q:"What is the index of the middle element in binary search for array of n elements?",o:["n/2","(low+high)/2","(low+high+1)/2","n-1"],a:1,e:"Middle index is (low+high)/2 (integer division)."},
+{t:"Arrays",d:"Hard",q:"Median of a stream of integers — which data structure pair gives O(log n) insertion and O(1) median?",o:["Two queues","Two stacks","Max-heap + min-heap","Balanced BST + array"],a:2,e:"A max-heap (lower half) and min-heap (upper half) keep the median at their tops."},
+{t:"Arrays",d:"Easy",q:"Given a sorted array, binary search returns -1 when?",o:["Target equals middle","Target is not found","Array is empty","Target is at index 0"],a:1,e:"Binary search returns -1 (or sentinel) when the target is absent from the array."},
+{t:"Arrays",d:"Medium",q:"Find all permutations of an array. Time complexity?",o:["O(n)","O(n log n)","O(n!)","O(2^n)"],a:2,e:"There are n! permutations; generating all requires O(n!) time."},
+
+// ─── LINKED LISTS ─────────────────────────────────────────────────────────────
+{t:"Linked Lists",d:"Easy",q:"What is the time complexity of inserting a node at the head of a singly linked list?",o:["O(n)","O(log n)","O(1)","O(n²)"],a:2,e:"Inserting at head just requires updating the head pointer: O(1)."},
+{t:"Linked Lists",d:"Easy",q:"How do you detect a cycle in a linked list efficiently?",o:["Use a hash set","Count nodes","Floyd's cycle detection (slow/fast pointers)","Reverse the list"],a:2,e:"Floyd's algorithm uses two pointers moving at different speeds; if they meet, there's a cycle."},
+{t:"Linked Lists",d:"Easy",q:"What is the time complexity of finding the middle of a singly linked list?",o:["O(1)","O(n)","O(log n)","O(n²)"],a:1,e:"We need to traverse at least half the list: O(n)."},
+{t:"Linked Lists",d:"Easy",q:"Which operation requires traversal of the entire linked list?",o:["Insert at head","Delete head","Access last element","Check if empty"],a:2,e:"Singly linked lists have no tail reference by default; accessing the last node is O(n)."},
+{t:"Linked Lists",d:"Easy",q:"In a doubly linked list, each node contains?",o:["Data and next pointer","Data, next, and previous pointers","Only a data field","Data and two data fields"],a:1,e:"Doubly linked list nodes have pointers to both next and previous nodes."},
+{t:"Linked Lists",d:"Medium",q:"Reversing a singly linked list iteratively requires how many pointers?",o:["1","2","3","4"],a:2,e:"Three pointers (prev, curr, next) are needed to reverse links iteratively."},
+{t:"Linked Lists",d:"Medium",q:"To find the nth node from the end in one pass, use?",o:["Recursion","Two pointers n apart","Hash map of positions","Stack"],a:1,e:"Move one pointer n steps ahead, then advance both until the first reaches end."},
+{t:"Linked Lists",d:"Medium",q:"What is the time complexity of merging two sorted linked lists?",o:["O(n log n)","O(n+m)","O(n*m)","O(n²)"],a:1,e:"Scan both lists once, merging in order: O(n+m)."},
+{t:"Linked Lists",d:"Medium",q:"Detect the start of a cycle in a linked list (Floyd's). After fast and slow meet, what next?",o:["Move slow to head, advance both one step until they meet","Reverse the list","Count cycle length","Use a stack"],a:0,e:"Reset one pointer to head; when both advance at speed 1, they meet at cycle start."},
+{t:"Linked Lists",d:"Medium",q:"LRU Cache uses which combination of data structures for O(1) get and put?",o:["Array + heap","Hash map + doubly linked list","Binary tree + array","Stack + queue"],a:1,e:"Hash map gives O(1) access; doubly linked list maintains recency order with O(1) insert/delete."},
+{t:"Linked Lists",d:"Easy",q:"What happens when you delete the only node in a linked list?",o:["Node is freed, head becomes null","Node is freed, head stays","Error occurs","List doubles"],a:0,e:"The head pointer is set to null; the list becomes empty."},
+{t:"Linked Lists",d:"Medium",q:"Add two numbers represented as linked lists (digits in reverse). What is the time complexity?",o:["O(n+m)","O(max(n,m))","O(n*m)","O(n log n)"],a:1,e:"You traverse both lists simultaneously, so O(max(n,m))."},
+{t:"Linked Lists",d:"Hard",q:"Reverse nodes in k-group. Time complexity?",o:["O(n)","O(n/k)","O(k)","O(n²)"],a:0,e:"Each node is visited and reversed once: O(n)."},
+{t:"Linked Lists",d:"Medium",q:"Clone a linked list with random pointers. Optimal space complexity?",o:["O(n)","O(1)","O(log n)","O(n²)"],a:1,e:"Interleaving original and cloned nodes allows O(1) extra space (not counting output)."},
+{t:"Linked Lists",d:"Easy",q:"Which pointer in a singly linked list's last node is set to?",o:["Itself","The head","null","Previous node"],a:2,e:"The last node's next pointer is null to signal end of list."},
+{t:"Linked Lists",d:"Medium",q:"Palindrome linked list check in O(n) time, O(1) space: approach?",o:["Hash map characters","Reverse second half and compare","Use a stack","Convert to array"],a:1,e:"Find mid, reverse second half, compare; then optionally restore."},
+{t:"Linked Lists",d:"Hard",q:"Merge k sorted linked lists. Optimal time complexity?",o:["O(n*k)","O(n*k²)","O(nk log k)","O(n log k)"],a:3,e:"Using a min-heap of size k, each of the nk total nodes is processed in O(log k): O(nk log k). Often written O(n log k) where n is total nodes."},
+{t:"Linked Lists",d:"Medium",q:"Odd-even linked list (group odd-indexed then even-indexed nodes). Time complexity?",o:["O(n)","O(n log n)","O(n²)","O(1)"],a:0,e:"One pass through the list rewiring pointers: O(n)."},
+{t:"Linked Lists",d:"Easy",q:"A circular linked list's last node points to?",o:["null","The head","The second node","Itself"],a:1,e:"In a circular linked list, the last node points back to the head."},
+{t:"Linked Lists",d:"Medium",q:"Swap nodes in pairs without modifying values. Extra space?",o:["O(n)","O(1)","O(log n)","O(n/2)"],a:1,e:"Pointer manipulation only requires O(1) extra space."},
+{t:"Linked Lists",d:"Hard",q:"What is the time complexity of sorting a linked list?",o:["O(n log n)","O(n²)","O(n)","O(n log² n)"],a:0,e:"Merge sort on a linked list achieves O(n log n) with O(log n) stack space."},
+{t:"Linked Lists",d:"Easy",q:"Inserting a node after a given node in a linked list is?",o:["O(1)","O(n)","O(log n)","O(n²)"],a:0,e:"Given a reference to the node, insertion requires only pointer updates: O(1)."},
+{t:"Linked Lists",d:"Medium",q:"Remove duplicates from unsorted linked list. O(n) approach uses?",o:["Sorting","Two pointers","Hash set","Counting array"],a:2,e:"A hash set tracks seen values; duplicates are removed in one pass: O(n)."},
+{t:"Linked Lists",d:"Easy",q:"What is a sentinel (dummy) node used for in linked list problems?",o:["Increase performance","Simplify edge cases at head/tail","Store extra data","Act as loop terminator"],a:1,e:"A dummy head node eliminates special-casing for operations at the head."},
+{t:"Linked Lists",d:"Medium",q:"Intersection of two linked lists (same node by reference). Approach?",o:["Hash set of visited nodes","Equalize lengths then advance both","Convert to arrays and compare","Reverse both"],a:1,e:"Calculate lengths, advance the longer list's pointer, then traverse both until they meet."},
+{t:"Linked Lists",d:"Hard",q:"Flatten a multilevel doubly linked list. Time complexity?",o:["O(n)","O(n²)","O(n log n)","O(n*m)"],a:0,e:"Each node is visited once when flattened with a stack: O(n) where n is total nodes."},
+{t:"Linked Lists",d:"Easy",q:"Which of the following list operations is O(n) for singly linked list?",o:["Insert at head","Delete head","Search by value","Check if empty"],a:2,e:"Searching requires traversing up to all nodes: O(n)."},
+{t:"Linked Lists",d:"Medium",q:"Rotate linked list by k places to the right. What must be found first?",o:["The middle node","The length and new tail position","The kth node from end","The cycle"],a:1,e:"Find length n, compute new tail at position n - (k % n) - 1, then re-link."},
+{t:"Linked Lists",d:"Easy",q:"In-place list deletion without knowing head: copy next node's data?",o:["True – copy data from next and delete next","False – impossible","True – but requires two passes","False – need to traverse from head"],a:0,e:"Copy the next node's value into the current node, then bypass the next node."},
+{t:"Linked Lists",d:"Medium",q:"Partition linked list around value x (all < x before >= x). Time complexity?",o:["O(1)","O(n)","O(n log n)","O(n²)"],a:1,e:"One pass building two sub-lists and joining them: O(n)."},
+{t:"Linked Lists",d:"Hard",q:"Design linked list supporting push_front, push_back, pop_front, pop_back all in O(1)?",o:["Singly linked list with head","Singly linked list with head and tail","Doubly linked list with head and tail","Array"],a:2,e:"A doubly linked list with sentinel head and tail pointers supports all four operations in O(1)."},
+{t:"Linked Lists",d:"Easy",q:"What is a skip list's advantage over a standard linked list?",o:["O(1) search","O(log n) average search","Less memory","Simpler code"],a:1,e:"Skip lists add express lanes for O(log n) average search, insert, and delete."},
+{t:"Linked Lists",d:"Medium",q:"Josephus problem on a circular linked list with n people, every kth eliminated. Time complexity?",o:["O(n)","O(n*k)","O(n log n)","O(k)"],a:0,e:"Simulation traverses the circular list eliminating n elements: O(n) for k=2 or O(nk) generally; mathematical solution is O(n)."},
+{t:"Linked Lists",d:"Easy",q:"Compared to an array, the main disadvantage of a linked list is?",o:["Slower insertion at head","No random access by index","Cannot store data","Higher insertion cost"],a:1,e:"Linked lists require O(n) traversal to reach a node by index."},
+
+// ─── STACKS & QUEUES ──────────────────────────────────────────────────────────
+{t:"Stacks & Queues",d:"Easy",q:"Stack follows which principle?",o:["FIFO","LIFO","FILO","Random access"],a:1,e:"Stack is Last In First Out (LIFO)."},
+{t:"Stacks & Queues",d:"Easy",q:"Queue follows which principle?",o:["LIFO","FILO","FIFO","Random access"],a:2,e:"Queue is First In First Out (FIFO)."},
+{t:"Stacks & Queues",d:"Easy",q:"What is the time complexity of push and pop in a stack implemented with an array?",o:["O(n)","O(log n)","O(1)","O(n²)"],a:2,e:"Array-based stack push/pop at the top is O(1)."},
+{t:"Stacks & Queues",d:"Easy",q:"Evaluate a balanced parentheses string using?",o:["Queue","Stack","Array scan","Linked list"],a:1,e:"A stack matches opening brackets with closing brackets efficiently."},
+{t:"Stacks & Queues",d:"Medium",q:"Implement a queue using two stacks. Amortized time per operation?",o:["O(n)","O(1)","O(log n)","O(n²)"],a:1,e:"Each element is moved between stacks at most twice, giving amortized O(1)."},
+{t:"Stacks & Queues",d:"Medium",q:"Min stack (supports push, pop, getMin in O(1)). How?",o:["Sort on every push","Maintain auxiliary min stack","Use a queue","Use recursion"],a:1,e:"An auxiliary stack stores the current minimum at each state of the main stack."},
+{t:"Stacks & Queues",d:"Medium",q:"Next greater element problem on array. Stack-based solution time complexity?",o:["O(n²)","O(n log n)","O(n)","O(log n)"],a:2,e:"Each element is pushed and popped from the stack once: O(n)."},
+{t:"Stacks & Queues",d:"Medium",q:"Sliding window maximum of size k. Optimal approach?",o:["Sort window each time O(nk log k)","Deque O(n)","Two stacks O(n)","Priority queue O(n log k)"],a:1,e:"A monotonic deque maintains candidates in O(1) amortized per element: O(n) total."},
+{t:"Stacks & Queues",d:"Easy",q:"Which data structure is used in BFS of a graph?",o:["Stack","Priority queue","Queue","Linked list"],a:2,e:"BFS uses a queue to process nodes in level order."},
+{t:"Stacks & Queues",d:"Easy",q:"Which data structure is used in DFS of a graph (iterative)?",o:["Queue","Stack","Deque","Array"],a:1,e:"Iterative DFS uses a stack to simulate the call stack."},
+{t:"Stacks & Queues",d:"Medium",q:"Decode string like '3[a2[bc]]'. Which data structure helps?",o:["Queue","Stack","Heap","Array"],a:1,e:"A stack holds current strings and repeat counts as we process nested brackets."},
+{t:"Stacks & Queues",d:"Hard",q:"Largest rectangle in histogram using stack. Why is the stack monotonically increasing?",o:["To ensure sorted output","To track bars that haven't found a shorter bar to their right","To count elements","To sort heights"],a:1,e:"We maintain bars in increasing order; when a shorter bar is found, we compute areas for popped bars."},
+{t:"Stacks & Queues",d:"Medium",q:"Implement stack using queues. Push is O(n) approach: what happens on push?",o:["Push to queue1","Push to empty queue2, then move all from queue1 to queue2","Rotate queue","None of the above"],a:1,e:"Rotate elements so the newly pushed element is at the front: O(n) push, O(1) pop."},
+{t:"Stacks & Queues",d:"Easy",q:"What is an 'overflow' in the context of a stack?",o:["Stack is empty","Stack exceeds its capacity","Stack has duplicate elements","Stack pointer is invalid"],a:1,e:"Overflow occurs when you try to push onto a full stack."},
+{t:"Stacks & Queues",d:"Easy",q:"What is an 'underflow' in the context of a stack?",o:["Stack is too large","Stack pointer is null","Pop from an empty stack","Duplicate push"],a:2,e:"Underflow occurs when you try to pop from an empty stack."},
+{t:"Stacks & Queues",d:"Medium",q:"Basic calculator (with +, -, parentheses) — which structure handles nested expressions?",o:["Queue","Stack","Heap","Trie"],a:1,e:"A stack saves the running result and sign when entering a parenthesis group."},
+{t:"Stacks & Queues",d:"Hard",q:"Daily temperatures problem (next warmer day). Stack approach time complexity?",o:["O(n²)","O(n)","O(n log n)","O(1)"],a:1,e:"A monotonic decreasing stack processes each temperature at most twice: O(n)."},
+{t:"Stacks & Queues",d:"Medium",q:"Circular queue: what is the condition for the queue being full?",o:["(tail+1)%capacity == head","tail == head","head == 0","tail == capacity"],a:0,e:"(tail+1)%capacity == head indicates the circular buffer is full (one slot reserved)."},
+{t:"Stacks & Queues",d:"Easy",q:"Which operation peeks at the top of a stack without removing it?",o:["push","pop","peek/top","size"],a:2,e:"peek (or top) returns the top element without modifying the stack."},
+{t:"Stacks & Queues",d:"Medium",q:"Evaluate postfix (Reverse Polish Notation) expression. Which structure is used?",o:["Queue","Stack","Array","Linked list"],a:1,e:"Operands are pushed; operators pop two operands, compute, and push result."},
+{t:"Stacks & Queues",d:"Hard",q:"Trapping rain water with a stack approach. Time complexity?",o:["O(n²)","O(n)","O(n log n)","O(n/2)"],a:1,e:"Each bar is pushed and popped once: O(n)."},
+{t:"Stacks & Queues",d:"Medium",q:"What differentiates a deque from a standard queue?",o:["Deque allows insertion/deletion at both ends","Deque is LIFO","Deque allows random access","Deque is always sorted"],a:0,e:"A double-ended queue (deque) supports push/pop at both front and back."},
+{t:"Stacks & Queues",d:"Easy",q:"Which of the following is a valid stack implementation?",o:["Array with push/pop at end","Linked list with insert/remove at tail","Both A and B","Neither"],a:2,e:"Both array (push at end) and linked list (insert/remove at head) are valid stack implementations."},
+{t:"Stacks & Queues",d:"Medium",q:"Remove k digits to make smallest number. Approach?",o:["Sort digits","Greedy with monotonic stack","DP","Binary search"],a:1,e:"Maintain a monotonically increasing stack of digits, removing larger digits when a smaller one arrives."},
+{t:"Stacks & Queues",d:"Hard",q:"Maximum frequency stack (FreqStack). Time complexity of push and pop?",o:["O(log n)","O(n)","O(1)","O(n log n)"],a:2,e:"Using a hash map of frequency to stack, both push and pop are O(1)."},
+{t:"Stacks & Queues",d:"Easy",q:"How does recursion use a stack internally?",o:["Function calls are stored in a call stack","Recursion uses a heap","Loop counters are stacked","Local variables are queued"],a:0,e:"Each recursive call pushes a frame onto the call stack; returns pop frames."},
+{t:"Stacks & Queues",d:"Medium",q:"Score of parentheses problem: '()' scores 1, '(A)' scores 2*A, concatenation adds. Which structure?",o:["Queue","Stack","Deque","Heap"],a:1,e:"A stack accumulates scores as parentheses are processed and merged."},
+{t:"Stacks & Queues",d:"Hard",q:"Largest rectangle in skyline (buildings with widths). Extension of histogram problem. Time complexity?",o:["O(n)","O(n²)","O(n log n)","O(n log² n)"],a:0,e:"Flattening to histogram then applying monotonic stack: O(n)."},
+{t:"Stacks & Queues",d:"Easy",q:"Priority queue dequeues elements in?",o:["Insertion order","Reverse insertion order","Priority order","Random order"],a:2,e:"A priority queue always removes the element with the highest (or lowest) priority."},
+{t:"Stacks & Queues",d:"Medium",q:"Implement a queue using only one stack. Dequeue operation worst-case time complexity?",o:["O(1)","O(n)","O(log n)","O(n²)"],a:1,e:"Each dequeue may require moving all n elements: O(n) worst case (O(1) amortized with two stacks)."},
+{t:"Stacks & Queues",d:"Easy",q:"What does FIFO stand for?",o:["First In First Out","Final Input Final Output","First Input Final Output","First In Final Order"],a:0,e:"FIFO: First In First Out — the first enqueued element is the first dequeued."},
+
+// ─── TREES & BINARY TREES ─────────────────────────────────────────────────────
+{t:"Trees",d:"Easy",q:"What is the height of a binary tree with a single node?",o:["0","1","-1","2"],a:0,e:"A single node has height 0 (no edges from root to leaf)."},
+{t:"Trees",d:"Easy",q:"In a complete binary tree with n nodes, what is the height?",o:["n","n/2","⌊log₂n⌋","n²"],a:2,e:"A complete binary tree of n nodes has height ⌊log₂n⌋."},
+{t:"Trees",d:"Easy",q:"Which traversal visits left subtree, root, right subtree in that order?",o:["Pre-order","Post-order","In-order","Level-order"],a:2,e:"In-order: Left → Root → Right. For BST it produces sorted output."},
+{t:"Trees",d:"Easy",q:"Binary Search Tree (BST) property: for any node, left subtree values are?",o:["Greater","Equal","Less","Random"],a:2,e:"BST property: all left subtree values < node value < all right subtree values."},
+{t:"Trees",d:"Easy",q:"What is the time complexity of searching in a balanced BST?",o:["O(n)","O(1)","O(log n)","O(n log n)"],a:2,e:"A balanced BST has height O(log n), so search is O(log n)."},
+{t:"Trees",d:"Medium",q:"Lowest Common Ancestor (LCA) of two nodes in a BST. Time complexity?",o:["O(n)","O(log n) for balanced BST","O(n²)","O(1)"],a:1,e:"Traverse from root; go left or right based on comparison with both values: O(log n) in balanced BST."},
+{t:"Trees",d:"Medium",q:"Level order traversal of binary tree uses?",o:["Stack","Recursion only","Queue","Priority queue"],a:2,e:"BFS with a queue processes nodes level by level."},
+{t:"Trees",d:"Medium",q:"Maximum depth of binary tree. Time complexity?",o:["O(1)","O(log n)","O(n)","O(n²)"],a:2,e:"Every node must be visited to find the maximum depth: O(n)."},
+{t:"Trees",d:"Medium",q:"Validate a BST. What must be tracked?",o:["Height","Min and max valid range for each node","Parent pointers","Depth only"],a:1,e:"Each node must fall within (min, max) bounds derived from ancestors."},
+{t:"Trees",d:"Medium",q:"Diameter of binary tree: longest path between any two nodes. Approach?",o:["BFS","DFS tracking max path through each node","Iterative level order","Topological sort"],a:1,e:"DFS computes left and right heights; diameter through node = left + right heights."},
+{t:"Trees",d:"Hard",q:"Serialize and deserialize binary tree. Time and space complexity?",o:["O(n) time, O(n) space","O(n log n) time, O(n) space","O(n²) time, O(n) space","O(log n) time, O(log n) space"],a:0,e:"Each node is visited once for both operations: O(n) time and space."},
+{t:"Trees",d:"Hard",q:"Binary tree maximum path sum (path can go through any nodes). Time complexity?",o:["O(n)","O(n²)","O(n log n)","O(2^n)"],a:0,e:"Post-order DFS visits each node once: O(n)."},
+{t:"Trees",d:"Medium",q:"Convert sorted array to balanced BST. Which element is the root?",o:["First","Last","Middle","Minimum"],a:2,e:"The middle element becomes root, recursively applied to left and right halves."},
+{t:"Trees",d:"Easy",q:"How many children can a node have in a binary tree?",o:["0 or 1","0, 1, or 2","Exactly 2","Any number"],a:1,e:"Binary tree nodes have 0, 1, or 2 children."},
+{t:"Trees",d:"Medium",q:"Right side view of binary tree: which traversal?",o:["DFS pre-order","Level order, keep last node of each level","Post-order","In-order"],a:1,e:"BFS level order; the last node at each level is visible from the right."},
+{t:"Trees",d:"Hard",q:"Count complete binary tree nodes in O(log²n) time. Strategy?",o:["DFS count all nodes","Binary search on last level using bit manipulation","BFS level count","Recursion halving"],a:1,e:"Find height twice per recursive call to skip fully filled subtrees: O(log²n)."},
+{t:"Trees",d:"Medium",q:"Balanced binary tree check. Time complexity of bottom-up approach?",o:["O(n²)","O(n)","O(log n)","O(n log n)"],a:1,e:"Bottom-up checks height at each node once, propagating -1 for imbalance: O(n)."},
+{t:"Trees",d:"Medium",q:"Populate next right pointers in perfect binary tree. Space complexity O(1) approach uses?",o:["Recursion","Queue","Already-set next pointers of current level","Stack"],a:2,e:"Use the already-connected current level's next pointers to wire the next level."},
+{t:"Trees",d:"Hard",q:"Recover BST with two nodes swapped. O(1) space approach?",o:["Re-build tree","Sort all values","Morris in-order traversal","Hash map values"],a:2,e:"Morris traversal performs in-order without a stack, detecting the two swapped nodes."},
+{t:"Trees",d:"Easy",q:"Pre-order traversal visits nodes in which order?",o:["Left, Root, Right","Root, Left, Right","Left, Right, Root","Right, Root, Left"],a:1,e:"Pre-order: Root → Left → Right."},
+{t:"Trees",d:"Medium",q:"Path sum: does a root-to-leaf path summing to target exist? Time complexity?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:2,e:"In the worst case all nodes are visited: O(n)."},
+{t:"Trees",d:"Hard",q:"Vertical order traversal of binary tree. Time complexity?",o:["O(n)","O(n log n)","O(n²)","O(n log² n)"],a:1,e:"Sorting by (column, row, value) for n nodes: O(n log n)."},
+{t:"Trees",d:"Easy",q:"A full binary tree requires every node to have?",o:["Exactly 2 children","0 or 2 children","At least 1 child","A parent"],a:1,e:"Full binary tree: every node has either 0 or 2 children."},
+{t:"Trees",d:"Medium",q:"Kth smallest element in BST. Approach?",o:["Pre-order traversal","In-order traversal (kth element)","Level order","BFS"],a:1,e:"In-order traversal of BST gives sorted order; return kth element."},
+{t:"Trees",d:"Hard",q:"All nodes at distance k from target node. Time complexity?",o:["O(n)","O(n²)","O(k)","O(log n)"],a:0,e:"Build parent pointers in O(n), then BFS from target up to depth k: O(n)."},
+{t:"Trees",d:"Medium",q:"Flatten binary tree to linked list (pre-order). In-place approach uses?",o:["Stack","Queue","Reverse pre-order linking","BFS level order"],a:2,e:"Process nodes in reverse pre-order (right, left, root), threading the list: O(n), O(1) space."},
+{t:"Trees",d:"Easy",q:"What is a leaf node?",o:["Node with one child","Node with no children","Root node","Node with two children"],a:1,e:"A leaf node has no children."},
+{t:"Trees",d:"Medium",q:"Construct binary tree from preorder and inorder traversals. Time complexity?",o:["O(n)","O(n²) naively, O(n) with hash map","O(n log n)","O(n²)"],a:1,e:"Without hash map: O(n²); with hash map for inorder indices: O(n)."},
+{t:"Trees",d:"Hard",q:"Minimum height trees (find roots). Time complexity?",o:["O(n)","O(n²)","O(n log n)","O(n log² n)"],a:0,e:"Topological pruning from leaves inward: O(n)."},
+{t:"Trees",d:"Medium",q:"Symmetric tree check (mirror of itself). Approach?",o:["Pre-order","Iterative with queue comparing pairs","Post-order","Level order count"],a:1,e:"Use a queue comparing pairs of nodes mirrored across center: O(n)."},
+{t:"Trees",d:"Easy",q:"In-order traversal of BST produces?",o:["Pre-sorted output","Sorted ascending output","Random output","Reverse sorted output"],a:1,e:"In-order (Left→Root→Right) on BST gives ascending sorted sequence."},
+{t:"Trees",d:"Hard",q:"Segment tree build time complexity for n elements?",o:["O(n)","O(n log n)","O(n²)","O(log n)"],a:0,e:"Building a segment tree requires O(n) time and O(n) space."},
+{t:"Trees",d:"Medium",q:"Trie insert and search time complexity for word of length m?",o:["O(1)","O(m)","O(m log m)","O(n) where n is total words"],a:1,e:"Each character is processed once: O(m) for both insert and search."},
+{t:"Trees",d:"Hard",q:"AVL tree insertion time complexity?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:1,e:"AVL tree height is O(log n); insertion and rotation are O(log n)."},
+{t:"Trees",d:"Easy",q:"Which tree traversal gives nodes from bottom to top, left to right?",o:["Pre-order","In-order","Post-order","Reverse level-order"],a:3,e:"Reverse level-order uses BFS and reverses or inserts at front: bottom-up, left-to-right."},
+{t:"Trees",d:"Medium",q:"Boundary traversal of binary tree (anti-clockwise). Sections included?",o:["Left boundary, leaves, right boundary (reverse)","Root, leaves","Left boundary only","All nodes"],a:0,e:"Three parts: left boundary (top to bottom), all leaves, right boundary (bottom to top)."},
+{t:"Trees",d:"Hard",q:"Number of BSTs with n distinct keys (Catalan number)?",o:["2^n","n!","C(n) = C(2n,n)/(n+1)","n log n"],a:2,e:"The nth Catalan number counts structurally distinct BSTs: C(n) = C(2n,n)/(n+1)."},
+{t:"Trees",d:"Medium",q:"Binary tree zigzag level order traversal. Which structure alternates direction?",o:["Two stacks","Queue with direction flag","Deque","Recursion level tracking"],a:0,e:"Two stacks alternate between left-to-right and right-to-left processing."},
+{t:"Trees",d:"Easy",q:"What is the maximum number of nodes at level l of a binary tree (root at level 0)?",o:["l","2^l","2l","l²"],a:1,e:"Level l can have at most 2^l nodes."},
+{t:"Trees",d:"Hard",q:"Red-Black tree maintains balance by ensuring?",o:["Height difference ≤1","Black-height is equal on all paths","All nodes are red","Leaves hold data"],a:1,e:"The black-height (number of black nodes on any root-to-leaf path) is equal for all paths."},
+{t:"Trees",d:"Medium",q:"Find duplicate subtrees. How to encode a subtree?",o:["Level order string","Serialized post-order string","Height","Sum of values"],a:1,e:"Serialize each subtree with post-order; identical serializations indicate duplicates."},
+{t:"Trees",d:"Hard",q:"Segment tree range update (lazy propagation) time complexity?",o:["O(n)","O(log n)","O(n log n)","O(1)"],a:1,e:"Lazy propagation defers updates, making each range update O(log n)."},
+{t:"Trees",d:"Easy",q:"Number of edges in a tree with n nodes?",o:["n","n+1","n-1","n/2"],a:2,e:"A tree with n nodes has exactly n-1 edges."},
+{t:"Trees",d:"Medium",q:"Invert binary tree (mirror). Time complexity?",o:["O(1)","O(log n)","O(n)","O(n²)"],a:2,e:"Every node's children are swapped: O(n)."},
+{t:"Trees",d:"Hard",q:"B-tree of order m allows at most how many keys per node?",o:["m","m-1","m+1","2m"],a:1,e:"A B-tree node holds at most m-1 keys (and m children)."},
+{t:"Trees",d:"Medium",q:"Cousins in binary tree: same depth, different parents. Approach?",o:["BFS tracking depth and parent","DFS pre-order","In-order traversal","Sorting by depth"],a:0,e:"BFS records depth and parent for each node; compare for target nodes."},
+{t:"Trees",d:"Easy",q:"Which traversal is used to delete a binary tree (free children before parent)?",o:["Pre-order","In-order","Post-order","Level-order"],a:2,e:"Post-order deletes children before the parent, ensuring proper memory deallocation."},
+
+// ─── GRAPHS ───────────────────────────────────────────────────────────────────
+{t:"Graphs",d:"Easy",q:"What is the time complexity of BFS on a graph with V vertices and E edges?",o:["O(V)","O(E)","O(V+E)","O(V*E)"],a:2,e:"BFS visits every vertex and edge once: O(V+E)."},
+{t:"Graphs",d:"Easy",q:"What is the time complexity of DFS on a graph with V vertices and E edges?",o:["O(V)","O(E)","O(V+E)","O(V²)"],a:2,e:"DFS visits every vertex and edge once: O(V+E)."},
+{t:"Graphs",d:"Easy",q:"Dijkstra's algorithm finds?",o:["Minimum spanning tree","Shortest path from single source (non-negative weights)","All-pairs shortest path","Topological order"],a:1,e:"Dijkstra finds shortest paths from a source to all vertices in a weighted graph with non-negative weights."},
+{t:"Graphs",d:"Medium",q:"Dijkstra's algorithm with a binary heap has time complexity?",o:["O(V²)","O(E log V)","O(V log E)","O(V+E)"],a:1,e:"Each edge relaxation is O(log V) with a binary heap: O(E log V)."},
+{t:"Graphs",d:"Medium",q:"Bellman-Ford algorithm can detect?",o:["Positive cycles","Negative weight cycles","Disconnected components","Strongly connected components"],a:1,e:"Bellman-Ford relaxes edges V-1 times; a further relaxation indicates a negative cycle."},
+{t:"Graphs",d:"Medium",q:"Floyd-Warshall algorithm solves?",o:["Single-source shortest path","All-pairs shortest path","MST","Topological sort"],a:1,e:"Floyd-Warshall computes shortest paths between all pairs in O(V³)."},
+{t:"Graphs",d:"Medium",q:"Kruskal's algorithm builds MST by?",o:["Adding edges in BFS order","Adding edges in increasing weight order using Union-Find","Relaxing edges","Greedy vertex selection"],a:1,e:"Kruskal sorts edges by weight and uses Union-Find to avoid cycles."},
+{t:"Graphs",d:"Medium",q:"Prim's algorithm grows MST by?",o:["Adding cheapest edge connecting to visited set","Sorting all edges","DFS traversal","Random edge selection"],a:0,e:"Prim greedily selects the minimum-weight edge crossing the cut at each step."},
+{t:"Graphs",d:"Easy",q:"Topological sort is valid for which type of graph?",o:["Undirected","Cyclic directed","Directed Acyclic Graph (DAG)","Complete graph"],a:2,e:"Topological sort orders vertices so all directed edges go from earlier to later. Only possible on a DAG."},
+{t:"Graphs",d:"Medium",q:"Topological sort using Kahn's algorithm uses which data structure?",o:["Stack","Heap","Queue (in-degree tracking)","Priority queue"],a:2,e:"Kahn's algorithm processes vertices with in-degree 0 using a queue."},
+{t:"Graphs",d:"Hard",q:"Tarjan's algorithm finds strongly connected components (SCCs) in?",o:["O(V+E)","O(V²)","O(E log V)","O(V log V)"],a:0,e:"Tarjan's DFS-based algorithm processes each vertex and edge once: O(V+E)."},
+{t:"Graphs",d:"Easy",q:"An undirected graph is bipartite if and only if it contains?",o:["No cycles","No odd-length cycles","No edges","Exactly two vertices"],a:1,e:"A graph is bipartite iff it has no odd-length cycles (2-colorable)."},
+{t:"Graphs",d:"Medium",q:"To detect a cycle in a directed graph, DFS uses?",o:["Visited set only","Visited + recursion stack (current path)","BFS","Topological sort"],a:1,e:"A back edge (to a node on the current recursion stack) indicates a cycle."},
+{t:"Graphs",d:"Medium",q:"Number of islands problem. Which traversal marks visited cells?",o:["DFS or BFS flood fill","Topological sort","Dijkstra","Union-Find only"],a:0,e:"DFS or BFS floods connected land cells to count and mark islands."},
+{t:"Graphs",d:"Hard",q:"Minimum cut in a flow network is found by?",o:["BFS alone","Dijkstra","Max-flow/min-cut theorem (Ford-Fulkerson)","Prim's"],a:2,e:"By the max-flow min-cut theorem, min cut equals max flow, found via Ford-Fulkerson."},
+{t:"Graphs",d:"Medium",q:"Clone a graph with N nodes and E edges. Time complexity?",o:["O(N)","O(N+E)","O(E)","O(N²)"],a:1,e:"BFS/DFS visits every node and edge once: O(N+E)."},
+{t:"Graphs",d:"Medium",q:"Course schedule problem (detect cycle in directed graph). Algorithm?",o:["Floyd-Warshall","Topological sort / DFS cycle detection","Dijkstra","Prim"],a:1,e:"If a valid topological order exists (no cycle), all courses can be completed."},
+{t:"Graphs",d:"Hard",q:"Minimum spanning tree for dense graphs (E ≈ V²). Which algorithm is better?",o:["Kruskal's O(E log E)","Prim's with adjacency matrix O(V²)","Bellman-Ford","Floyd-Warshall"],a:1,e:"For dense graphs, Prim's with an adjacency matrix runs in O(V²), which equals O(E) for dense graphs."},
+{t:"Graphs",d:"Easy",q:"Which graph representation uses less space for sparse graphs?",o:["Adjacency matrix","Adjacency list","Edge list","Incidence matrix"],a:1,e:"Adjacency list stores only existing edges: O(V+E) vs O(V²) for adjacency matrix."},
+{t:"Graphs",d:"Medium",q:"Shortest path in an unweighted graph?",o:["Dijkstra","Bellman-Ford","BFS","DFS"],a:2,e:"BFS finds shortest paths (by edge count) in unweighted graphs in O(V+E)."},
+{t:"Graphs",d:"Hard",q:"Network delay time (Dijkstra). Time complexity with priority queue?",o:["O(V+E)","O(E log V)","O(V²)","O(V log E)"],a:1,e:"Dijkstra with a priority queue: O(E log V)."},
+{t:"Graphs",d:"Medium",q:"Word ladder problem (BFS). What are the graph nodes?",o:["Characters","Words","Edges between words","Letter positions"],a:1,e:"Each word is a node; edges connect words differing by one character."},
+{t:"Graphs",d:"Hard",q:"Alien dictionary (topological sort from word list). Time complexity?",o:["O(C) where C is total characters","O(V+E) where V=unique chars, E=ordering rules","O(n²)","O(n log n)"],a:1,e:"Build a graph of character precedence; topological sort is O(V+E)."},
+{t:"Graphs",d:"Medium",q:"Pacific Atlantic water flow. What is traversed from each ocean?",o:["DFS from all boundary cells of each ocean","DFS from center","BFS globally","Dijkstra from source"],a:0,e:"Reverse BFS/DFS from ocean boundaries identifies cells reachable by each ocean."},
+{t:"Graphs",d:"Easy",q:"In Union-Find, what does path compression do?",o:["Balances the tree by rank","Flattens the tree by pointing nodes directly to root","Removes duplicate edges","Sorts elements"],a:1,e:"Path compression makes future find operations faster by pointing nodes directly to root."},
+{t:"Graphs",d:"Medium",q:"Accounts merge problem uses which data structure?",o:["Stack","Queue","Union-Find","Priority queue"],a:2,e:"Union-Find merges accounts sharing email addresses efficiently."},
+{t:"Graphs",d:"Hard",q:"Minimum number of vertices to reach all nodes in a DAG?",o:["Count nodes with in-degree 0","Count SCCs","BFS from all nodes","Topological sort length"],a:0,e:"Nodes with in-degree 0 cannot be reached from any other node, so they must be starting points."},
+{t:"Graphs",d:"Medium",q:"Flood fill algorithm time complexity on m×n grid?",o:["O(m+n)","O(m*n)","O(m log n)","O((m+n)²)"],a:1,e:"BFS/DFS may visit all m*n cells: O(m*n)."},
+{t:"Graphs",d:"Hard",q:"Traveling Salesman Problem (TSP) exact solution time complexity?",o:["O(n²)","O(n log n)","O(2^n * n)","O(n!)"],a:2,e:"Dynamic programming with bitmask for TSP: O(2^n * n)."},
+{t:"Graphs",d:"Medium",q:"Bus routes problem (minimum routes to reach destination). Approach?",o:["Dijkstra on stops","BFS on routes (nodes = routes)","DFS","DP"],a:1,e:"Model routes as nodes; BFS finds minimum number of route changes."},
+{t:"Graphs",d:"Easy",q:"A tree is a special case of a graph that is?",o:["Directed and cyclic","Undirected and acyclic with V-1 edges","Directed acyclic","Complete"],a:1,e:"A tree is an undirected, connected, acyclic graph with V-1 edges."},
+{t:"Graphs",d:"Hard",q:"Minimum cost to connect all points (MST on 2D points). Prim's with heap: time complexity?",o:["O(n²)","O(n² log n)","O(n log n)","O(n)"],a:1,e:"For n points there are O(n²) edges; Prim's with heap: O(n² log n)."},
+{t:"Graphs",d:"Medium",q:"Redundant connection (find extra edge making cycle). Algorithm?",o:["BFS","DFS","Union-Find","Topological sort"],a:2,e:"Union-Find detects when adding an edge connects already-unioned components."},
+{t:"Graphs",d:"Hard",q:"Eulerian path exists in undirected graph when?",o:["All vertices have even degree","Exactly 2 vertices have odd degree (or all even for circuit)","Graph is complete","Graph has no cycles"],a:1,e:"An Eulerian path exists if exactly 0 or 2 vertices have odd degree."},
+
+// ─── SORTING & SEARCHING ──────────────────────────────────────────────────────
+{t:"Sorting",d:"Easy",q:"What is the best-case time complexity of quicksort?",o:["O(n²)","O(n log n)","O(n)","O(log n)"],a:1,e:"Best case (balanced partitions): O(n log n)."},
+{t:"Sorting",d:"Easy",q:"What is the worst-case time complexity of quicksort?",o:["O(n log n)","O(n²)","O(n)","O(log n)"],a:1,e:"Worst case (always selecting min/max as pivot): O(n²)."},
+{t:"Sorting",d:"Easy",q:"Merge sort is?",o:["Not stable","Stable","In-place","O(n) space always"],a:1,e:"Merge sort preserves relative order of equal elements (stable)."},
+{t:"Sorting",d:"Easy",q:"Which sorting algorithm is NOT comparison-based?",o:["Merge sort","Quick sort","Radix sort","Heap sort"],a:2,e:"Radix sort distributes elements into buckets by digit, not by comparison."},
+{t:"Sorting",d:"Easy",q:"Heap sort time complexity (all cases)?",o:["O(n)","O(n log n)","O(n²)","O(log n)"],a:1,e:"Building heap is O(n); n extractions each O(log n): O(n log n) always."},
+{t:"Sorting",d:"Medium",q:"External merge sort is used when?",o:["Data fits in RAM","Data is too large for RAM","Data is already sorted","Data has no duplicates"],a:1,e:"External merge sort handles data too large for memory, using disk-based merging."},
+{t:"Sorting",d:"Easy",q:"Insertion sort is efficient when?",o:["Array is large","Array is reverse-sorted","Array is nearly sorted","Array has many duplicates"],a:2,e:"Insertion sort has O(n) best case for nearly-sorted arrays."},
+{t:"Sorting",d:"Easy",q:"Selection sort always makes exactly how many swaps for n elements?",o:["n","n-1","n log n","n²"],a:1,e:"Selection sort makes exactly n-1 swaps (one per element placement)."},
+{t:"Sorting",d:"Medium",q:"Counting sort is efficient when?",o:["Elements have large range","Elements are floating point","Range of elements k is small relative to n","Data is on disk"],a:2,e:"Counting sort is O(n+k); it's efficient when k = O(n)."},
+{t:"Sorting",d:"Medium",q:"What is the average time complexity of Tim Sort (Python's built-in sort)?",o:["O(n)","O(n log n)","O(n²)","O(log n)"],a:1,e:"Tim Sort combines insertion sort for small runs and merge sort: O(n log n) average."},
+{t:"Sorting",d:"Hard",q:"Median of medians algorithm guarantees O(n) selection by ensuring the pivot eliminates at least?",o:["n/4 elements","3n/10 elements","n/2 elements","n/3 elements"],a:1,e:"Median of medians guarantees the pivot eliminates at least 3n/10 elements: O(n) worst case."},
+{t:"Sorting",d:"Medium",q:"Binary search requires the array to be?",o:["Unsorted","Sorted","Randomly ordered","Distinct elements"],a:1,e:"Binary search relies on sorted order to halve the search space."},
+{t:"Sorting",d:"Easy",q:"What is the time complexity of binary search?",o:["O(n)","O(n²)","O(log n)","O(1)"],a:2,e:"Binary search halves the search space each step: O(log n)."},
+{t:"Sorting",d:"Medium",q:"Search in rotated sorted array. Time complexity?",o:["O(n)","O(log n)","O(n log n)","O(1)"],a:1,e:"Modified binary search identifies the sorted half at each step: O(log n)."},
+{t:"Sorting",d:"Medium",q:"Find peak element in array (binary search). Time complexity?",o:["O(n)","O(log n)","O(n log n)","O(1)"],a:1,e:"Move toward the greater neighbor at each step: O(log n)."},
+{t:"Sorting",d:"Hard",q:"Merge k sorted arrays of total n elements. Time complexity using min-heap?",o:["O(n)","O(nk)","O(n log k)","O(n log n)"],a:2,e:"Each of the n elements is inserted/extracted from a k-element heap: O(n log k)."},
+{t:"Sorting",d:"Easy",q:"Bubble sort compares?",o:["Every pair once","Adjacent elements in each pass","Elements at distance 2","Random pairs"],a:1,e:"Bubble sort repeatedly compares and swaps adjacent elements."},
+{t:"Sorting",d:"Medium",q:"Sort colors (Dutch National Flag). Time complexity and space?",o:["O(n log n), O(1)","O(n), O(1)","O(n), O(n)","O(n²), O(1)"],a:1,e:"Three-pointer single pass: O(n) time, O(1) space."},
+{t:"Sorting",d:"Hard",q:"Smallest range covering elements from k lists. Approach?",o:["Merge all and scan","Min-heap + max tracking","Sorting","BFS"],a:1,e:"Use a min-heap to track the current minimum across lists while recording the maximum: O(n log k)."},
+{t:"Sorting",d:"Easy",q:"Which sort is best for linked lists?",o:["Quick sort","Insertion sort","Merge sort","Counting sort"],a:2,e:"Merge sort works well on linked lists; it doesn't require random access."},
+{t:"Sorting",d:"Medium",q:"Interpolation search average time complexity for uniformly distributed data?",o:["O(log n)","O(log log n)","O(n)","O(n log n)"],a:1,e:"For uniform distributions, interpolation search achieves O(log log n) average case."},
+{t:"Sorting",d:"Medium",q:"Wiggle sort II: interleave smaller and larger halves. Approach?",o:["Two-pointer after sorting","3-way partition (virtual indexing)","Counting sort","Heap"],a:1,e:"QuickSelect finds median, 3-way partition places elements in virtual odd/even indexed positions: O(n)."},
+{t:"Sorting",d:"Easy",q:"What is a stable sort?",o:["Runs in O(n)","Sorts in place","Preserves relative order of equal elements","Uses no extra memory"],a:2,e:"Stable sort: equal elements maintain their original relative order."},
+{t:"Sorting",d:"Hard",q:"Sort a nearly-sorted array where each element is at most k positions from sorted. Best algorithm?",o:["Bubble sort","Insertion sort","Min-heap of size k+1","Counting sort"],a:2,e:"Extract minimum from a sliding window of size k+1 using a min-heap: O(n log k)."},
+{t:"Sorting",d:"Easy",q:"Radix sort time complexity (d digits, base b)?",o:["O(n log n)","O(d*(n+b))","O(n*d)","O(n²)"],a:1,e:"Radix sort does d passes of counting sort each costing O(n+b): O(d*(n+b))."},
+{t:"Sorting",d:"Medium",q:"Lower bound for comparison-based sorting?",o:["O(n)","O(n log n)","O(n²)","O(log n)"],a:1,e:"Information-theoretic argument: at least Ω(n log n) comparisons needed."},
+{t:"Sorting",d:"Hard",q:"Pancake sorting: minimum number of flips to sort n elements?",o:["n","2n-3","n(n-1)/2","n log n"],a:1,e:"At most 2n-3 flips are needed using the standard greedy algorithm."},
+{t:"Sorting",d:"Medium",q:"Search a 2D matrix where rows and columns are sorted. Time complexity?",o:["O(m*n)","O(m log n)","O(m+n)","O(log(m*n))"],a:2,e:"Start at top-right; eliminate a row or column at each step: O(m+n)."},
+{t:"Sorting",d:"Easy",q:"Which sorting algorithm uses a divide and conquer strategy?",o:["Insertion sort","Selection sort","Bubble sort","Merge sort"],a:3,e:"Merge sort divides array in half, sorts each half, then merges: O(n log n)."},
+{t:"Sorting",d:"Hard",q:"Find k closest points to origin. Optimal approach?",o:["Sort all points","QuickSelect O(n) average","Max-heap of size k O(n log k)","Bucket sort"],a:1,e:"QuickSelect finds k smallest in average O(n) without full sorting."},
+{t:"Sorting",d:"Medium",q:"What does 'inversion' mean in the context of sorting?",o:["A negative element","A pair (i,j) where i<j but arr[i]>arr[j]","A sorted subarray","A duplicate element"],a:1,e:"An inversion is a pair out of order; the number of inversions measures how unsorted an array is."},
+{t:"Sorting",d:"Easy",q:"Merge sort auxiliary space complexity?",o:["O(1)","O(log n)","O(n)","O(n²)"],a:2,e:"Merge sort needs O(n) auxiliary space for merging."},
+
+// ─── DYNAMIC PROGRAMMING ─────────────────────────────────────────────────────
+{t:"Dynamic Programming",d:"Easy",q:"What are the two key properties required for a problem to be solvable by DP?",o:["Greedy choice and optimal substructure","Optimal substructure and overlapping subproblems","Divide and conquer and memoization","Recursion and backtracking"],a:1,e:"DP requires optimal substructure (solution contains optimal sub-solutions) and overlapping subproblems (same subproblems recur)."},
+{t:"Dynamic Programming",d:"Easy",q:"Fibonacci with memoization time complexity?",o:["O(2^n)","O(n²)","O(n)","O(log n)"],a:2,e:"Each unique subproblem (F(0)..F(n)) is computed once: O(n)."},
+{t:"Dynamic Programming",d:"Easy",q:"0/1 Knapsack time and space complexity?",o:["O(n*W), O(n*W)","O(n²), O(n)","O(2^n), O(n)","O(n*W), O(W)"],a:0,e:"Standard DP table is O(n*W) time and space; optimized to O(W) space."},
+{t:"Dynamic Programming",d:"Medium",q:"Longest Common Subsequence (LCS) time complexity?",o:["O(n+m)","O(n*m)","O(n log m)","O(2^n)"],a:1,e:"DP table of size n×m: O(n*m) time and space."},
+{t:"Dynamic Programming",d:"Medium",q:"Longest Increasing Subsequence (LIS). O(n log n) approach uses?",o:["Memoization","Patience sorting / binary search","Matrix DP","BFS"],a:1,e:"Maintaining a sorted 'tails' array with binary search gives O(n log n)."},
+{t:"Dynamic Programming",d:"Medium",q:"Coin change (minimum coins). Time complexity?",o:["O(n*amount)","O(2^n)","O(n log n)","O(amount)"],a:0,e:"DP over amounts 1..amount, trying each coin: O(n*amount)."},
+{t:"Dynamic Programming",d:"Medium",q:"Edit distance (Levenshtein). What operations are counted?",o:["Insert, delete","Insert, delete, replace","Replace only","Swap"],a:1,e:"Edit distance counts minimum insertions, deletions, and replacements to transform one string to another."},
+{t:"Dynamic Programming",d:"Hard",q:"Burst balloons. Why is it solved with interval DP?",o:["Balloons form a tree","Removing balloons creates dependencies on neighbors at explosion time","It's a graph problem","Sorting helps"],a:1,e:"The last balloon to burst in a range determines the multiplier; interval DP considers all last-burst choices."},
+{t:"Dynamic Programming",d:"Medium",q:"Unique paths on m×n grid (no obstacles). DP time complexity?",o:["O(m+n)","O(m*n)","O((m+n)!)","O(m*n²)"],a:1,e:"Fill each cell once: O(m*n)."},
+{t:"Dynamic Programming",d:"Medium",q:"Maximum profit in stock trading (one transaction). Approach?",o:["DP table","Track min price seen and max profit","Sorting","Two pointers"],a:1,e:"Track the minimum price so far; compute max profit in one pass: O(n)."},
+{t:"Dynamic Programming",d:"Hard",q:"Regular expression matching (. and *). Time complexity?",o:["O(n+m)","O(n*m)","O(2^n)","O(n log m)"],a:1,e:"2D DP table of size (n+1)×(m+1): O(n*m)."},
+{t:"Dynamic Programming",d:"Medium",q:"Partition equal subset sum (subset summing to total/2). Time complexity?",o:["O(n*sum)","O(2^n)","O(n²)","O(n log n)"],a:0,e:"Boolean DP of size sum/2 for each of n items: O(n*sum/2) = O(n*sum)."},
+{t:"Dynamic Programming",d:"Medium",q:"Word break problem. Time complexity?",o:["O(n²)","O(n³)","O(n*L) where L is max word length","O(2^n)"],a:0,e:"For each position, check each possible word ending there: O(n²) in the general case."},
+{t:"Dynamic Programming",d:"Hard",q:"Palindrome partitioning II (min cuts). Time complexity with O(n²) palindrome check precomputation?",o:["O(n³)","O(n²)","O(n log n)","O(n)"],a:1,e:"Precompute palindromes in O(n²), then fill DP in O(n²)."},
+{t:"Dynamic Programming",d:"Medium",q:"Jump game I (can you reach end?). Greedy approach time complexity?",o:["O(n²)","O(n log n)","O(n)","O(1)"],a:2,e:"Track max reachable index in one pass: O(n)."},
+{t:"Dynamic Programming",d:"Hard",q:"Interleaving string (is s3 an interleaving of s1 and s2?). Time complexity?",o:["O(m+n)","O(m*n)","O(2^(m+n))","O(m log n)"],a:1,e:"2D DP: each cell (i,j) in O(1): O(m*n)."},
+{t:"Dynamic Programming",d:"Medium",q:"House robber (no two adjacent). Recurrence?",o:["dp[i] = max(dp[i-1], dp[i-2]+nums[i])","dp[i] = dp[i-1]+nums[i]","dp[i] = max all previous","dp[i] = dp[i-2]+nums[i]"],a:0,e:"At each house, choose to rob it (add to dp[i-2]) or skip it (keep dp[i-1])."},
+{t:"Dynamic Programming",d:"Hard",q:"Longest valid parentheses. DP approach time complexity?",o:["O(n²)","O(n)","O(n log n)","O(2^n)"],a:1,e:"DP table where dp[i] = length of longest valid substring ending at i: O(n)."},
+{t:"Dynamic Programming",d:"Medium",q:"Decode ways (number of ways to decode digit string). Time complexity?",o:["O(n)","O(n²)","O(2^n)","O(n log n)"],a:0,e:"DP where each position depends on previous one or two positions: O(n)."},
+{t:"Dynamic Programming",d:"Hard",q:"Minimum cost to cut a stick. Why is interval DP used?",o:["Cuts affect remaining stick length independently","Cuts create subproblems on remaining segments","Greedy works here","Sorting cuts helps"],a:1,e:"After a cut, the cost of the remaining cuts depends on the current stick boundaries: interval DP."},
+{t:"Dynamic Programming",d:"Medium",q:"Triangle minimum path sum (top to bottom). Time complexity?",o:["O(n²)","O(n)","O(n log n)","O(2^n)"],a:0,e:"For n rows, up to n nodes per row: O(n²) total cells processed."},
+{t:"Dynamic Programming",d:"Hard",q:"Egg drop problem (k eggs, n floors). Optimal DP time complexity?",o:["O(k*n²)","O(k*n log n)","O(k*n)","O(2^n)"],a:1,e:"Binary search on number of floors per state gives O(k*n log n)."},
+{t:"Dynamic Programming",d:"Medium",q:"Counting BSTs with n nodes (Catalan numbers). DP recurrence?",o:["dp[n] = sum of dp[i]*dp[n-i-1] for i=0..n-1","dp[n] = dp[n-1]*2","dp[n] = dp[n-1]+dp[n-2]","dp[n] = n!"],a:0,e:"For each root choice i, left has i trees, right has n-i-1 trees: multiply and sum."},
+{t:"Dynamic Programming",d:"Hard",q:"Maximum profit with cooldown (stock). What extra state is tracked?",o:["Current price only","Hold/not-hold/cooldown states","Number of transactions","Nothing extra"],a:1,e:"Three states per day: holding stock, in cooldown, or free to buy."},
+{t:"Dynamic Programming",d:"Medium",q:"Climbing stairs (1 or 2 steps). This is equivalent to?",o:["Factorial","Fibonacci sequence","Catalan numbers","Pascal's triangle"],a:1,e:"ways(n) = ways(n-1) + ways(n-2): exactly the Fibonacci recurrence."},
+{t:"Dynamic Programming",d:"Hard",q:"Minimum window to contain all distinct characters (DP + sliding window). Space complexity of pure DP?",o:["O(n)","O(n²)","O(n*k)","O(1)"],a:2,e:"Tracking states for each character in a window: O(n*k) where k is alphabet size."},
+{t:"Dynamic Programming",d:"Easy",q:"Top-down DP uses which technique to avoid redundant computation?",o:["Tabulation","Memoization","Greedy","Divide and conquer"],a:1,e:"Top-down DP memoizes results of recursive calls."},
+{t:"Dynamic Programming",d:"Easy",q:"Bottom-up DP fills the table in which order?",o:["Largest to smallest subproblems","Randomly","Smallest to largest subproblems","Alphabetically"],a:2,e:"Bottom-up DP solves smaller subproblems first and builds up to the main problem."},
+{t:"Dynamic Programming",d:"Hard",q:"Optimal binary search tree for n keys with given search probabilities. Time complexity?",o:["O(n²)","O(n³)","O(2^n)","O(n log n)"],a:1,e:"Knuth's interval DP: O(n³)."},
+{t:"Dynamic Programming",d:"Medium",q:"Palindromic substrings count. DP or expand-around-center time complexity?",o:["O(n²)","O(n³)","O(n)","O(n log n)"],a:0,e:"Expand around each center (n centers, O(n) expansion each): O(n²)."},
+{t:"Dynamic Programming",d:"Hard",q:"Matrix chain multiplication. DP time complexity?",o:["O(n²)","O(n³)","O(2^n)","O(n⁴)"],a:1,e:"Three nested loops for interval DP: O(n³)."},
+{t:"Dynamic Programming",d:"Easy",q:"Greedy algorithms vs DP: greedy makes?",o:["All possible choices","Locally optimal choice at each step","Random choices","Worst-case choices"],a:1,e:"Greedy algorithms make the locally optimal choice at each step, hoping for a global optimum."},
+{t:"Dynamic Programming",d:"Medium",q:"Longest palindromic subsequence time complexity?",o:["O(n)","O(n log n)","O(n²)","O(2^n)"],a:2,e:"LPS is LCS of string with its reverse: O(n²)."},
+{t:"Dynamic Programming",d:"Hard",q:"Minimum number of deletions to make a string palindrome. Relates to?",o:["LCS","LIS","Edit distance","Coin change"],a:0,e:"Deletions needed = n - LPS length; LPS = LCS of string and its reverse."},
+{t:"Dynamic Programming",d:"Hard",q:"Boolean parenthesization: count ways to parenthesize a boolean expression. Time complexity?",o:["O(n²)","O(n³)","O(2^n)","O(n⁴)"],a:1,e:"Interval DP considering each operator as split point: O(n³)."},
+{t:"Dynamic Programming",d:"Medium",q:"Best time to buy and sell stock (at most 2 transactions). State variables needed?",o:["Current price","Day index only","Day + transaction count + holding state","Nothing"],a:2,e:"DP state: (day, #transactions done, currently holding) encodes all decisions."},
+
+// ─── HASH TABLES ──────────────────────────────────────────────────────────────
+{t:"Hash Tables",d:"Easy",q:"Average time complexity of hash table lookup?",o:["O(n)","O(log n)","O(1)","O(n²)"],a:2,e:"Hash tables use a hash function for O(1) average lookup."},
+{t:"Hash Tables",d:"Easy",q:"Worst-case time complexity of hash table lookup?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:2,e:"All keys hashing to the same bucket degrades to O(n) linear scan."},
+{t:"Hash Tables",d:"Easy",q:"Collision resolution by chaining stores?",o:["All entries in one array","A linked list at each bucket","A balanced BST globally","Entries in sorted order"],a:1,e:"Chaining keeps a linked list (or other structure) at each hash bucket."},
+{t:"Hash Tables",d:"Medium",q:"Open addressing handles collisions by?",o:["Using linked lists","Finding another open slot in the table","Increasing table size immediately","Rejecting the insert"],a:1,e:"Open addressing probes for the next available slot (linear, quadratic, double hashing)."},
+{t:"Hash Tables",d:"Easy",q:"Load factor of a hash table is?",o:["Number of buckets","n / number_of_buckets","Number of collisions","Bucket size"],a:1,e:"Load factor = (number of entries) / (number of buckets); affects performance."},
+{t:"Hash Tables",d:"Medium",q:"When should a hash table be resized (rehashed)?",o:["When load factor exceeds a threshold (e.g., 0.75)","Every n insertions","When first collision occurs","When table is completely full"],a:0,e:"Typically rehash when load factor exceeds ~0.75 to maintain O(1) operations."},
+{t:"Hash Tables",d:"Easy",q:"Which property must a good hash function have?",o:["Map all keys to same bucket","Distribute keys uniformly","Always use modulo prime","Require sorted keys"],a:1,e:"A good hash function distributes keys uniformly to minimize collisions."},
+{t:"Hash Tables",d:"Medium",q:"Two Sum with hash map: for each element x, you store?",o:["x itself","target - x as the complement","x * 2","x's index only"],a:1,e:"Store complement (target - x) → index so future lookups are O(1)."},
+{t:"Hash Tables",d:"Medium",q:"Group anagrams: how to use a hash map?",o:["Hash by first character","Hash by sorted string or character count tuple","Hash by length","Hash by last character"],a:1,e:"Anagrams share the same sorted form or character frequency tuple."},
+{t:"Hash Tables",d:"Hard",q:"Longest substring without repeating characters. Hash map stores?",o:["Character counts","Last seen index of each character","Frequency of each character","Starting indices"],a:1,e:"Store the last seen index of each character to jump the left window pointer."},
+{t:"Hash Tables",d:"Medium",q:"Subarray sum equals k using prefix sums. Hash map stores?",o:["Running sum → count of times seen","Index → value","Value → index","Sum pairs"],a:0,e:"For each prefix sum, check if (sum - k) has been seen before: hash map counts occurrences."},
+{t:"Hash Tables",d:"Easy",q:"A set data structure internally uses a hash table to provide?",o:["Sorted order","O(1) average membership test","O(log n) membership test","Ordered traversal"],a:1,e:"Hash set provides O(1) average insert, delete, and membership test."},
+{t:"Hash Tables",d:"Medium",q:"Design a data structure supporting insert, delete, and getRandom in O(1). Combination needed?",o:["Array + linked list","Hash map + resizable array","BST + queue","Stack + queue"],a:1,e:"Hash map for O(1) delete (track indices), resizable array for O(1) getRandom."},
+{t:"Hash Tables",d:"Easy",q:"What is double hashing in open addressing?",o:["Hashing the hash","Using a second hash function for step size","Chaining with two lists","Two separate hash tables"],a:1,e:"Double hashing uses a second hash function to determine probe step size, reducing clustering."},
+{t:"Hash Tables",d:"Medium",q:"Isomorphic strings: two strings are isomorphic if characters can be mapped. Check uses?",o:["Sorting","Two hash maps (one each direction)","Single hash map","Stack"],a:1,e:"Two maps ensure bijective character mapping between strings."},
+{t:"Hash Tables",d:"Hard",q:"LFU cache: get and put in O(1). Data structures needed?",o:["Array","Hash map + doubly linked list per frequency","BST","Priority queue"],a:1,e:"One map for key→(value,freq), one map for freq→ordered set of keys: O(1) operations."},
+{t:"Hash Tables",d:"Medium",q:"Find all pairs with difference k in O(n) time. Approach?",o:["Sort then binary search","Hash set lookup for x+k","Two pointers","Nested loops"],a:1,e:"For each element x, check if x+k (or x-k) is in the hash set: O(n)."},
+{t:"Hash Tables",d:"Easy",q:"Hash collision frequency increases when?",o:["Load factor is low","Hash function is good","Load factor is high","Keys are strings"],a:2,e:"Higher load factor means more keys per bucket, increasing collision probability."},
+{t:"Hash Tables",d:"Medium",q:"Top k frequent elements. Two structures used?",o:["Sort + scan","Hash map + heap or bucket sort","BST + array","Two queues"],a:1,e:"Hash map counts frequencies; heap or bucket sort extracts top k."},
+{t:"Hash Tables",d:"Hard",q:"Minimum window substring uses hash map to track?",o:["Window boundaries","Character counts needed vs current window counts","All substrings","Character positions"],a:1,e:"Two maps: required character counts and current window counts; adjust window when satisfied."},
+{t:"Hash Tables",d:"Easy",q:"Dictionary in Python is implemented as?",o:["BST","Linked list","Hash table","Array"],a:2,e:"Python dict is a hash table with open addressing."},
+{t:"Hash Tables",d:"Medium",q:"Consistent hashing is used in?",o:["Sorting algorithms","Distributed systems for load balancing","Graph algorithms","Dynamic programming"],a:1,e:"Consistent hashing minimizes key remapping when nodes are added/removed in distributed systems."},
+{t:"Hash Tables",d:"Easy",q:"Which of the following causes a hash table to degrade to O(n)?",o:["Good hash function","Low load factor","Many collisions all to one bucket","Large table size"],a:2,e:"All keys mapping to one bucket means all operations scan a list of n elements."},
+{t:"Hash Tables",d:"Medium",q:"4Sum problem: hash map reduces time from O(n³) to?",o:["O(n²)","O(n)","O(n log n)","O(n²) still"],a:0,e:"Two-pass approach: store pair sums in hash map, then scan pairs: O(n²)."},
+{t:"Hash Tables",d:"Hard",q:"Count distinct elements in every window of size k. Hash map approach time complexity?",o:["O(n*k)","O(n)","O(n log k)","O(n²)"],a:1,e:"Maintain character count map, adding/removing one element per slide: O(n)."},
+{t:"Hash Tables",d:"Easy",q:"What does a perfect hash function guarantee?",o:["No collisions","O(1) worst case","Uniform distribution","All of the above"],a:1,e:"A perfect hash function maps keys to unique buckets: O(1) worst-case lookup."},
+{t:"Hash Tables",d:"Medium",q:"Word frequency count in a document. Best data structure?",o:["Array","Sorted array","Hash map","BST"],a:2,e:"Hash map provides O(1) insert and lookup for word counts."},
+{t:"Hash Tables",d:"Hard",q:"Bloom filter vs hash table: bloom filter may have?",o:["False negatives","False positives","Both","Neither"],a:1,e:"Bloom filters use multiple hashes; membership test can have false positives but never false negatives."},
+{t:"Hash Tables",d:"Easy",q:"Time complexity of iterating over all n elements in a hash map?",o:["O(1)","O(log n)","O(n)","O(n²)"],a:2,e:"Iterating visits all n entries: O(n)."},
+{t:"Hash Tables",d:"Medium",q:"Vertical order traversal needs node ordering by column. Best storage?",o:["Array","Hash map from column → list of nodes","Queue","Stack"],a:1,e:"Hash map keyed by column index stores nodes for each column: O(1) insert per node."},
+{t:"Hash Tables",d:"Easy",q:"Contains duplicate problem: fastest solution?",o:["Sort and scan","Hash set","Nested loops","Binary search"],a:1,e:"Insert into a hash set; if element already present, return true: O(n)."},
+{t:"Hash Tables",d:"Hard",q:"Substring with concatenation of all words. Time complexity (words of length L, n total characters)?",o:["O(n*m)","O(n*L)","O(n*m*L)","O(n)"],a:1,e:"Sliding window of size m*L with L starting positions: O(n*L)."},
+{t:"Hash Tables",d:"Medium",q:"First unique character in a string. Two passes: first pass does?",o:["Build frequency map","Find the first character","Sort characters","None"],a:0,e:"First pass counts character frequencies; second pass finds first with count 1."},
+{t:"Hash Tables",d:"Easy",q:"HashMap vs TreeMap: TreeMap provides?",o:["O(1) lookup","O(log n) lookup with sorted order","O(n) lookup","O(1) insertion"],a:1,e:"TreeMap (backed by Red-Black tree) provides O(log n) operations but maintains sorted order."},
+
+// ─── HEAPS ────────────────────────────────────────────────────────────────────
+{t:"Heaps",d:"Easy",q:"What property does a max-heap maintain?",o:["Parent ≤ children","Parent ≥ children","Sorted array","Complete BST"],a:1,e:"Max-heap: every parent's value is ≥ its children's values."},
+{t:"Heaps",d:"Easy",q:"Time complexity of extracting the maximum from a max-heap?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:1,e:"Extract max, replace with last element, then heapify down: O(log n)."},
+{t:"Heaps",d:"Easy",q:"Time complexity of inserting into a heap?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:1,e:"Insert at end, then bubble up: O(log n)."},
+{t:"Heaps",d:"Easy",q:"Building a heap from n elements using heapify is?",o:["O(n log n)","O(n)","O(log n)","O(n²)"],a:1,e:"Bottom-up heapify (Floyd's method) builds heap in O(n)."},
+{t:"Heaps",d:"Medium",q:"Kth largest element in a stream uses?",o:["Max-heap of all elements","Min-heap of size k","Sorted array","Queue"],a:1,e:"A min-heap of size k keeps the k largest elements; the minimum is the kth largest."},
+{t:"Heaps",d:"Medium",q:"Top k frequent elements using heap. Time complexity?",o:["O(n)","O(n log k)","O(n log n)","O(k log n)"],a:1,e:"Count frequencies O(n), then maintain heap of size k: O(n log k)."},
+{t:"Heaps",d:"Medium",q:"Merge k sorted lists using min-heap. Space complexity?",o:["O(n)","O(k)","O(n+k)","O(n log k)"],a:1,e:"The heap holds at most k elements (one per list): O(k) space."},
+{t:"Heaps",d:"Hard",q:"Find median from data stream. Time per insert?",o:["O(1)","O(n)","O(log n)","O(n log n)"],a:2,e:"Insert into max-heap or min-heap and rebalance: O(log n)."},
+{t:"Heaps",d:"Medium",q:"Task scheduler (CPU scheduling). Greedy with heap approach time complexity?",o:["O(n)","O(n log n)","O(n²)","O(n log k)"],a:1,e:"Push/pop from a max-heap for each scheduling unit: O(n log n)."},
+{t:"Heaps",d:"Medium",q:"Reorganize string (no two adjacent characters same). Greedy with?",o:["Queue","Max-heap","Min-heap","Stack"],a:1,e:"Always pick the most frequent character, using a max-heap by frequency."},
+{t:"Heaps",d:"Easy",q:"In a binary heap stored as an array, children of node at index i are at?",o:["2i and 2i-1","2i+1 and 2i+2","i/2 and i/2+1","i+1 and i+2"],a:1,e:"0-indexed: children of node i are at 2i+1 (left) and 2i+2 (right)."},
+{t:"Heaps",d:"Medium",q:"K closest points to origin. Min-heap or max-heap of size k?",o:["Min-heap of all points","Max-heap of size k (remove if farther than kth)","Min-heap of size k","Sort all"],a:1,e:"Max-heap of size k: if a new point is closer than the farthest in heap, replace it."},
+{t:"Heaps",d:"Hard",q:"Sliding window median using two heaps. Time complexity per element?",o:["O(1)","O(log k)","O(k)","O(n)"],a:1,e:"Insert/delete from heaps of size ~k: O(log k) per operation."},
+{t:"Heaps",d:"Easy",q:"Min-heap peek (findMin) time complexity?",o:["O(n)","O(log n)","O(1)","O(n log n)"],a:2,e:"Root of min-heap is always the minimum: O(1) peek."},
+{t:"Heaps",d:"Medium",q:"Heap sort: after building heap, elements are extracted how?",o:["From random positions","From the root, swapped with last, heap size reduced","From the last position","Sorted insert"],a:1,e:"Repeatedly swap root with last element, reduce heap size, and heapify down: O(n log n)."},
+{t:"Heaps",d:"Hard",q:"Kth smallest element in a sorted matrix. Heap approach time complexity?",o:["O(k log n)","O(n²)","O(n log n)","O(n)"],a:0,e:"Use a min-heap initialized with the first column; extract k times, each O(log n): O(k log n)."},
+{t:"Heaps",d:"Medium",q:"Dijkstra's algorithm performance bottleneck is?",o:["Finding shortest path","Priority queue operations","Adjacency list traversal","Edge relaxation without heap"],a:1,e:"Priority queue (heap) insertions and extractions dominate: O(E log V)."},
+{t:"Heaps",d:"Easy",q:"Heap is a complete binary tree, meaning?",o:["All nodes have two children","All levels full except possibly last, filled left-to-right","All leaves at same level","No duplicate values"],a:1,e:"Complete binary tree: all levels fully filled except possibly the last, which fills left-to-right."},
+{t:"Heaps",d:"Hard",q:"Lazy deletion in a heap is used for?",o:["Faster insertion","Deleting arbitrary elements efficiently","Building heap faster","Sorting"],a:1,e:"Mark deleted elements, skip them during extraction: avoids costly reheapification for each delete."},
+{t:"Heaps",d:"Medium",q:"Priority queue differs from a regular queue in that?",o:["It is LIFO","Elements are dequeued by priority, not insertion order","It has no duplicates","It uses a stack internally"],a:1,e:"Priority queue always removes the highest-priority element regardless of insertion order."},
+
+// ─── RECURSION & BACKTRACKING ─────────────────────────────────────────────────
+{t:"Backtracking",d:"Easy",q:"What is backtracking?",o:["Always choosing the greedy option","Trying all possibilities and undoing choices that don't lead to solution","Memoizing all recursive calls","Iterating without recursion"],a:1,e:"Backtracking explores all possible choices, abandoning (backtracking from) paths that violate constraints."},
+{t:"Backtracking",d:"Easy",q:"N-Queens problem: time complexity?",o:["O(n²)","O(n!)","O(n^n)","O(2^n)"],a:1,e:"In the worst case, we try all permutations of rows: O(n!)."},
+{t:"Backtracking",d:"Medium",q:"Generating all subsets of n elements (power set). Time complexity?",o:["O(n²)","O(2^n)","O(n log n)","O(n!)"],a:1,e:"There are 2^n subsets; generating all is O(2^n)."},
+{t:"Backtracking",d:"Medium",q:"Combination sum (elements reused). Time complexity?",o:["O(n^target)","O(2^n)","O(n!)","O(target^n/n!)"],a:1,e:"In the worst case the recursion tree is exponential: O(2^(target/min_element)) roughly."},
+{t:"Backtracking",d:"Medium",q:"Permutations of n distinct elements. Number of permutations?",o:["2^n","n²","n!","n log n"],a:2,e:"There are n! permutations of n distinct elements."},
+{t:"Backtracking",d:"Medium",q:"Sudoku solver uses backtracking. When is a choice undone?",o:["When a digit is invalid for the cell","When the grid is full","After every placement","Never"],a:0,e:"If placing a digit leads to a conflict, it is removed and the next candidate is tried."},
+{t:"Backtracking",d:"Hard",q:"Word search in 2D grid. Time complexity?",o:["O(m*n)","O(m*n*4^L) where L is word length","O(L^2)","O(m*n*L)"],a:1,e:"For each cell, DFS explores up to 4 directions for each of L characters: O(m*n*4^L)."},
+{t:"Backtracking",d:"Medium",q:"Letter combinations of phone number. Number of combinations for n digits?",o:["3^n","4^n","n!","Depends on digit-to-letters mapping"],a:3,e:"Each digit maps to 3 or 4 letters; total combinations vary with the specific digits."},
+{t:"Backtracking",d:"Easy",q:"Recursion requires a _____ to avoid infinite loops.",o:["Loop","Base case","Global variable","Stack"],a:1,e:"A base case terminates recursion when the simplest sub-problem is reached."},
+{t:"Backtracking",d:"Medium",q:"Generate parentheses of n pairs. How many valid strings?",o:["n!","n²","C(2n,n)/n+1 (Catalan number)","2^n"],a:2,e:"The number of valid parenthesizations equals the nth Catalan number."},
+{t:"Backtracking",d:"Hard",q:"Hamiltonian path problem solved by backtracking. Time complexity?",o:["O(n²)","O(n log n)","O(n!)","O(2^n)"],a:2,e:"In the worst case, all permutations of vertices are tried: O(n!)."},
+{t:"Backtracking",d:"Medium",q:"Palindrome partitioning (all palindrome splits). Time complexity?",o:["O(n²)","O(n*2^n)","O(2^n)","O(n!)"],a:1,e:"At most 2^n subsets, each check up to O(n): O(n*2^n)."},
+{t:"Backtracking",d:"Easy",q:"The call stack in recursion grows with?",o:["Number of loop iterations","Depth of recursion","Input size squared","Length of output"],a:1,e:"Each recursive call adds a frame to the call stack; depth equals recursion depth."},
+{t:"Backtracking",d:"Hard",q:"Crossword puzzle solver (fill words into grid). Primary technique?",o:["Greedy","DP","Backtracking with constraint propagation","BFS"],a:2,e:"Backtracking tries each word placement; constraint propagation prunes invalid options early."},
+{t:"Backtracking",d:"Medium",q:"Subsets with duplicates. How to avoid duplicate subsets?",o:["Sort input and skip same element at same recursion level","Use a hash set","Always include duplicates","Use two pointers"],a:0,e:"Sort first; skip duplicate elements at the same recursion depth to avoid duplicate subsets."},
+{t:"Backtracking",d:"Medium",q:"Restore IP addresses from digit string. Constraint that limits branching?",o:["4 octets, each 0-255","Length of string","No leading zeros rule","All of the above"],a:3,e:"Valid IP: 4 parts, each 0-255, no leading zeros, total length matches: all constraints prune search."},
+{t:"Backtracking",d:"Hard",q:"Partition to k equal subsets. Time complexity?",o:["O(k^n)","O(2^n * k)","O(n!)","O(n²)"],a:1,e:"State is a bitmask of used elements (2^n states) with k subset targets: O(2^n * k)."},
+{t:"Backtracking",d:"Easy",q:"Tail recursion is optimized by some compilers to avoid?",o:["Stack overflow","Heap overflow","Slow I/O","Infinite loops"],a:0,e:"Tail call optimization reuses the current stack frame, preventing stack overflow."},
+{t:"Backtracking",d:"Medium",q:"Count islands using DFS (backtracking). The 'undo' step?",o:["Mark cell as water again","Mark cell as visited","Both","No undo needed — cells are permanently marked"],a:3,e:"For counting islands, cells are permanently marked visited; no backtracking/undo needed."},
+{t:"Backtracking",d:"Hard",q:"Optimal placement of parentheses to maximize expression value. Uses?",o:["Greedy","DP + backtracking","Pure backtracking","BFS"],a:1,e:"Try all parenthesizations (backtracking), memoize results (DP): interval DP."},
+{t:"Backtracking",d:"Easy",q:"Which of the following is a classic backtracking problem?",o:["Binary search","Fibonacci","N-Queens","Merge sort"],a:2,e:"N-Queens places queens on a board satisfying constraints, using backtracking."},
+{t:"Backtracking",d:"Medium",q:"Knight's tour problem on n×n board. Time complexity?",o:["O(n²)","O(n^n²)","O(8^(n²))","O(n!)"],a:2,e:"At each of n² cells the knight has up to 8 moves: O(8^(n²)) worst case."},
+{t:"Backtracking",d:"Hard",q:"Solving a cryptarithmetic puzzle. Main technique?",o:["Greedy","Dynamic programming","Backtracking with constraint propagation","Sorting"],a:2,e:"Assign digits to letters with backtracking; propagate arithmetic constraints to prune early."},
+{t:"Backtracking",d:"Medium",q:"Combination sum II (each element used once, no duplicate combos). Key step?",o:["Use hash set","Sort and skip duplicates at same level","Use memoization","Count frequencies"],a:1,e:"Sort input; when at the same recursion level, skip elements equal to the previous one."},
+{t:"Backtracking",d:"Easy",q:"What is memoization in recursion?",o:["Using loops instead of recursion","Caching results of subproblems to avoid recomputation","Sorting recursive calls","Counting recursive calls"],a:1,e:"Memoization stores previously computed results so identical subproblems aren't recomputed."},
+{t:"Backtracking",d:"Hard",q:"Verbal arithmetic (SEND + MORE = MONEY). Which pruning is most effective?",o:["Limit search to 5 letters","Check partial sums column by column","Use greedy digit assignment","Ignore carry"],a:1,e:"Checking column-by-column with carries prunes invalid assignments early in the search."},
+{t:"Backtracking",d:"Medium",q:"Generate all valid BSTs with values 1..n. The number of structurally unique BSTs is?",o:["n!","2^n","Catalan(n)","n²"],a:2,e:"The number of structurally unique BSTs with n nodes is the nth Catalan number."},
+{t:"Backtracking",d:"Easy",q:"Stack overflow in recursion is caused by?",o:["Too many global variables","Deep recursion exceeding call stack limit","Too many heap allocations","Infinite loops without recursion"],a:1,e:"Each recursive call adds a stack frame; excessive depth exhausts the call stack."},
+{t:"Backtracking",d:"Hard",q:"Regular expression backtracking worst case (pattern '.*' on string)?",o:["O(n)","O(m*n)","O(2^n)","O(n²)"],a:2,e:"Naive backtracking regex matching can exhibit exponential behavior with '.*' patterns."},
+{t:"Backtracking",d:"Medium",q:"Beautiful arrangement (1..n placed so each element divisible by position or vice versa). Approach?",o:["DP","Backtracking with bitmask","Greedy","Sorting"],a:1,e:"Permutations checked with backtracking; bitmask tracks used numbers efficiently."},
+
+// ─── EXTRA ARRAYS ─────────────────────────────────────────────────────────────
+{t:"Arrays",d:"Medium",q:"Longest subarray with sum at most k using sliding window. What type of window is used?",o:["Fixed size","Variable/shrinkable window","Two fixed pointers","Circular window"],a:1,e:"A shrinkable window expands right and contracts left to maintain sum ≤ k."},
+{t:"Arrays",d:"Hard",q:"Minimum size subarray sum ≥ target. Time complexity of sliding window approach?",o:["O(n²)","O(n log n)","O(n)","O(n/2)"],a:2,e:"Each element enters and leaves the window at most once: O(n)."},
+
+// ─── EXTRA LINKED LISTS ────────────────────────────────────────────────────────
+{t:"Linked Lists",d:"Medium",q:"Split linked list in half. Which pointer technique finds the midpoint?",o:["Single pointer iterating twice","Slow/fast pointers","Two stacks","Counting then splitting"],a:1,e:"Slow moves one step, fast moves two; when fast reaches end, slow is at mid."},
+{t:"Linked Lists",d:"Hard",q:"Design browser history (back/forward) using a doubly linked list. Forward clears future. Time per op?",o:["O(n)","O(1)","O(log n)","O(n²)"],a:1,e:"Moving the current pointer and truncating future history are all O(1) pointer ops."},
+{t:"Linked Lists",d:"Medium",q:"Multiply two numbers represented as linked lists. After reversing both, result is built?",o:["Iteratively digit by digit like long multiplication","By converting to integers","By sorting","By using stack"],a:0,e:"Multiply digit by digit (like school multiplication), carrying and adding into result list."},
+{t:"Linked Lists",d:"Easy",q:"A XOR linked list stores in each node?",o:["XOR of its data values","XOR of addresses of prev and next","XOR of all values","None of the above"],a:1,e:"XOR linked list stores prev XOR next address, halving pointer storage but complicating traversal."},
+{t:"Linked Lists",d:"Medium",q:"Reorder list (L0→Ln→L1→Ln-1…). Steps needed?",o:["Sort then merge","Find mid, reverse second half, merge alternately","Use a queue","Two pointers from start"],a:1,e:"Three steps: find middle, reverse second half, interleave first and reversed second halves."},
+{t:"Linked Lists",d:"Easy",q:"What is the time complexity of searching in an unsorted linked list?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:2,e:"Must traverse up to all n nodes to find the target: O(n)."},
+{t:"Linked Lists",d:"Hard",q:"All O(1) time doubly linked list: which sentinel setup is most clean?",o:["Single dummy head","Single dummy tail","Dummy head and dummy tail","No sentinel"],a:2,e:"Dummy head and tail eliminate all edge cases for insertion and deletion at boundaries."},
+{t:"Linked Lists",d:"Medium",q:"Find the starting node of a loop (given loop exists). Second meeting point after reset gives?",o:["Length of loop","Start of loop","End of list","Middle of loop"],a:1,e:"After Floyd's meeting, reset one pointer to head; both advance one step at a time and meet at loop start."},
+{t:"Linked Lists",d:"Easy",q:"Deleting a node from a sorted linked list of distinct values. Time complexity?",o:["O(1)","O(n)","O(log n)","O(n log n)"],a:1,e:"Must find the node first (O(n) traversal), then delete in O(1)."},
+{t:"Linked Lists",d:"Hard",q:"Skip list expected height for n elements?",o:["O(n)","O(log n)","O(√n)","O(n log n)"],a:1,e:"Each level independently promotes each element with probability 1/2: expected height O(log n)."},
+{t:"Linked Lists",d:"Medium",q:"Sort a linked list in O(n log n) — which sort is preferred over quicksort?",o:["Insertion sort","Merge sort","Heap sort","Counting sort"],a:1,e:"Merge sort on linked lists avoids random access issues; quicksort benefits less from cache on lists."},
+{t:"Linked Lists",d:"Easy",q:"Sentinel node in a linked list is also called?",o:["Guard node / dummy node","Head node","Leaf node","Anchor node"],a:0,e:"Sentinel, guard, or dummy nodes are placeholders that simplify boundary conditions."},
+{t:"Linked Lists",d:"Medium",q:"Given a linked list and value x, move all nodes < x before nodes ≥ x, preserving relative order. Complexity?",o:["O(n log n)","O(n)","O(n²)","O(1)"],a:1,e:"Two sub-lists (< x and ≥ x) built in one pass and joined: O(n)."},
+{t:"Linked Lists",d:"Hard",q:"In-place reversal of sublist from position m to n. Extra space needed?",o:["O(n)","O(n-m)","O(1)","O(log n)"],a:2,e:"Pointer manipulations only: O(1) extra space."},
+{t:"Linked Lists",d:"Easy",q:"Circular doubly linked list: what does the last node's next pointer point to?",o:["Null","Itself","Head","Previous node"],a:2,e:"In a circular doubly linked list, last→next = head and head→prev = last."},
+
+// ─── EXTRA STACKS & QUEUES ────────────────────────────────────────────────────
+{t:"Stacks & Queues",d:"Medium",q:"Asteroid collision problem (stack). When do two asteroids collide?",o:["Always","When both move in same direction","When positive asteroid is pushed and top is negative","When negative asteroid meets positive top"],a:3,e:"A negative asteroid (moving left) collides with a positive one (moving right) at the top of the stack."},
+{t:"Stacks & Queues",d:"Easy",q:"What is the purpose of a monotonic stack?",o:["Sort an array","Maintain stack in sorted order to answer range queries efficiently","Store duplicates","Act as a queue"],a:1,e:"A monotonic stack keeps elements in increasing or decreasing order to efficiently find next greater/smaller elements."},
+{t:"Stacks & Queues",d:"Medium",q:"Online stock span problem. Stack stores?",o:["Prices only","(price, span) pairs","Days only","Prices sorted"],a:1,e:"Each entry stores (price, cumulative span) so we can merge spans when a larger price arrives."},
+{t:"Stacks & Queues",d:"Hard",q:"Maximum width ramp in array. Two-pass stack approach. Time complexity?",o:["O(n²)","O(n)","O(n log n)","O(n/2)"],a:1,e:"Build decreasing stack in first pass, scan right-to-left in second pass: O(n)."},
+{t:"Stacks & Queues",d:"Medium",q:"Number of visible people in a queue (stack). Each person blocks shorter ones behind. Stack type?",o:["Min-stack","Monotonic decreasing stack","Max-stack","Queue"],a:1,e:"A monotonically decreasing stack tracks who can be seen from the left."},
+{t:"Stacks & Queues",d:"Easy",q:"Which problem uses a stack to match opening and closing brackets?",o:["Binary search","Valid parentheses","Fibonacci","Sorting"],a:1,e:"A stack pushes opening brackets and pops on matching closing brackets."},
+{t:"Stacks & Queues",d:"Medium",q:"Simplify path (Unix path like '/a/b/../c'). Stack operations?",o:["Push all segments, pop on space","Push valid dirs, pop on '..'","Push '..' tokens","Sort segments"],a:1,e:"Push valid directory names; pop on '..'; ignore '.' and empty segments."},
+{t:"Stacks & Queues",d:"Hard",q:"Trapping rain water (vertical bars). Why does the two-pointer approach need to track max heights on both sides?",o:["To count bars","Water at each position = min(maxLeft,maxRight) - height","To sort bars","To find total width"],a:1,e:"Water above each bar equals min(max height to left, max height to right) minus the bar's own height."},
+{t:"Stacks & Queues",d:"Easy",q:"A stack implemented with a linked list: push is performed at?",o:["Tail","Head","Middle","Random position"],a:1,e:"Push inserts a new node at the head (O(1)); pop removes from the head."},
+{t:"Stacks & Queues",d:"Medium",q:"Generate binary numbers 1 to n using a queue. Time complexity?",o:["O(n log n)","O(n)","O(n²)","O(2^n)"],a:1,e:"Enqueue '1'; repeatedly dequeue, print, and enqueue with '0' and '1' appended: O(n)."},
+{t:"Stacks & Queues",d:"Hard",q:"LRU cache eviction strategy. What does 'least recently used' mean?",o:["Least accessed overall","Accessed least recently in time","Smallest value","Oldest by insertion"],a:1,e:"LRU evicts the item not accessed for the longest time (least recently used)."},
+{t:"Stacks & Queues",d:"Medium",q:"Implement stack with increment operation (bottom k elements incremented). Amortized O(1) using?",o:["Auxiliary increment array","Sort on every increment","Rebuild stack","Two stacks"],a:0,e:"Lazy increment array stores pending increments; they propagate down during pop: amortized O(1)."},
+{t:"Stacks & Queues",d:"Easy",q:"What is a deque (double-ended queue)?",o:["A stack with two tops","A queue allowing insert/delete at both ends","A circular queue","A sorted queue"],a:1,e:"Deque supports push/pop at both front and back in O(1)."},
+{t:"Stacks & Queues",d:"Medium",q:"Time Needed to Buy Tickets (queue simulation). Approach?",o:["Greedy","Simulate queue until target person finishes","Stack","Sort then scan"],a:1,e:"Simulate each round: each person in front of target buys min(their_tickets, target_tickets); those behind buy min(their, target-1)."},
+{t:"Stacks & Queues",d:"Hard",q:"Design a hit counter supporting getHits (last 300 seconds). Space-efficient structure?",o:["Array of 300 (circular buffer) with timestamp","Hash map","Linked list","BST"],a:0,e:"A circular buffer of size 300 stores (timestamp, count) pairs; old entries are overwritten."},
+{t:"Stacks & Queues",d:"Medium",q:"Evaluate RPN (Reverse Polish Notation). What happens when an operator is encountered?",o:["Push it","Pop two operands, compute, push result","Skip it","Store for later"],a:1,e:"Operators pop two operands, apply the operation, and push the result back."},
+{t:"Stacks & Queues",d:"Easy",q:"In queue using two stacks, how many stacks are needed for O(1) amortized enqueue and dequeue?",o:["1","2","3","4"],a:1,e:"Two stacks: one for enqueue, one for dequeue (elements transferred lazily)."},
+{t:"Stacks & Queues",d:"Hard",q:"Word ladder II (all shortest transformation sequences). Uses?",o:["DFS only","BFS for shortest length + DFS/backtracking for all paths","Dijkstra","Greedy"],a:1,e:"BFS finds the shortest length; then backtracking reconstructs all paths of that length."},
+{t:"Stacks & Queues",d:"Medium",q:"Stack permutation: given push sequence 1..n, can a given pop sequence be produced?",o:["Always yes","Use simulation: push and pop greedily","Never if sequences differ","Sort both and compare"],a:1,e:"Simulate: push next element, pop while top equals next needed in pop sequence."},
+
+// ─── EXTRA TREES ──────────────────────────────────────────────────────────────
+{t:"Trees",d:"Medium",q:"Morris traversal performs in-order traversal using?",o:["O(n) stack","O(1) extra space via temporary thread pointers","Recursion","BFS queue"],a:1,e:"Morris traversal threads right pointers of predecessors temporarily: O(1) space, O(n) time."},
+{t:"Trees",d:"Hard",q:"Heavy-Light Decomposition (HLD) on a tree supports path queries in?",o:["O(n) per query","O(log² n) per query","O(log n) per query","O(√n) per query"],a:1,e:"HLD decomposes tree into O(log n) chains; each chain queried with segment tree: O(log² n)."},
+{t:"Trees",d:"Easy",q:"What is an ancestor of a node in a tree?",o:["Any node in the tree","Any node on the path from root to the node (excluding the node)","Its children","Its siblings"],a:1,e:"Ancestors are all nodes on the root-to-node path, not including the node itself."},
+
+// ─── EXTRA GRAPHS ─────────────────────────────────────────────────────────────
+{t:"Graphs",d:"Medium",q:"Bipartite graph check using BFS. What is stored in the queue?",o:["Edge weights","Nodes with their color assignment","Visited flags only","Distances"],a:1,e:"Each node is colored alternately (0/1); a conflict means not bipartite."},
+{t:"Graphs",d:"Easy",q:"In-degree of a vertex in a directed graph is?",o:["Number of outgoing edges","Number of incoming edges","Total edges","Number of neighbors"],a:1,e:"In-degree counts edges directed toward the vertex."},
+{t:"Graphs",d:"Medium",q:"Strongly Connected Component (SCC): every pair of vertices can reach each other. Algorithm?",o:["BFS","Dijkstra","Kosaraju's or Tarjan's","Kruskal's"],a:2,e:"Kosaraju's (two DFS passes) and Tarjan's (one DFS with low-link values) find SCCs."},
+{t:"Graphs",d:"Easy",q:"Which of the following is NOT a graph traversal algorithm?",o:["BFS","DFS","Dijkstra","Bubble sort"],a:3,e:"Bubble sort is a sorting algorithm, not a graph traversal."},
+{t:"Graphs",d:"Medium",q:"0-1 BFS (edges weight 0 or 1). Structure used instead of a regular queue?",o:["Priority queue","Deque","Stack","Sorted queue"],a:1,e:"Deque: weight-0 edges push to front, weight-1 edges push to back: O(V+E)."},
+{t:"Graphs",d:"Hard",q:"Maximum flow Ford-Fulkerson time complexity with BFS (Edmonds-Karp)?",o:["O(V*E²)","O(V²*E)","O(E²*V)","O(V*E log E)"],a:0,e:"Edmonds-Karp (BFS-based Ford-Fulkerson): O(V*E²)."},
+{t:"Graphs",d:"Medium",q:"Minimum spanning tree total weight is unique when?",o:["Graph is complete","All edge weights are distinct","Graph is bipartite","Graph is directed"],a:1,e:"When all edge weights are distinct, there is a unique MST."},
+{t:"Graphs",d:"Easy",q:"Graph with no edges is called?",o:["Complete graph","Null graph / empty graph","Tree","Bipartite"],a:1,e:"A null or empty graph has vertices but no edges."},
+{t:"Graphs",d:"Hard",q:"Longest path in a DAG. Time complexity using DP on topological order?",o:["O(V+E)","O(V²)","O(E log V)","O(V log V)"],a:0,e:"Process vertices in topological order, relax edges: O(V+E)."},
+{t:"Graphs",d:"Medium",q:"Graph coloring: minimum colors needed for a graph is called?",o:["Chromatic index","Chromatic number","Degree","Independence number"],a:1,e:"Chromatic number χ(G) is the minimum number of colors for a proper vertex coloring."},
+{t:"Graphs",d:"Easy",q:"What does it mean for a graph to be connected?",o:["Every vertex has degree ≥ 2","There is a path between every pair of vertices","No cycles exist","All edges have equal weight"],a:1,e:"A connected graph has a path between every pair of vertices."},
+{t:"Graphs",d:"Hard",q:"Articulation points (bridges) in undirected graph. Algorithm?",o:["BFS","Tarjan's DFS with discovery and low times","Dijkstra","Union-Find"],a:1,e:"Tarjan's algorithm finds bridges/articulation points using DFS discovery and low-link times: O(V+E)."},
+{t:"Graphs",d:"Medium",q:"Cheapest flights within k stops. Bellman-Ford variant time complexity?",o:["O(V+E)","O(k*E)","O(V*E)","O(k*V)"],a:1,e:"Run Bellman-Ford for k+1 iterations: O(k*E)."},
+{t:"Graphs",d:"Easy",q:"An adjacency matrix for V vertices uses how much space?",o:["O(V)","O(E)","O(V²)","O(V+E)"],a:2,e:"Adjacency matrix is a V×V grid: O(V²) space."},
+{t:"Graphs",d:"Hard",q:"Number of ways to reach destination in a DAG. Approach?",o:["BFS count","DP on topological order","DFS count","Greedy"],a:1,e:"Process in topological order; ways[v] = sum of ways[u] for all predecessors u of v."},
+{t:"Graphs",d:"Medium",q:"Snakes and Ladders (board game shortest path). Model as?",o:["DP","Weighted shortest path (Dijkstra)","BFS on unweighted graph","DFS"],a:2,e:"Each cell is a node; BFS finds minimum dice rolls (unweighted shortest path)."},
+
+// ─── EXTRA SORTING ────────────────────────────────────────────────────────────
+{t:"Sorting",d:"Easy",q:"Which sorting algorithm is used by Java's Arrays.sort for primitive arrays?",o:["Merge sort","Heap sort","Dual-pivot quicksort","Insertion sort"],a:2,e:"Java uses dual-pivot quicksort for primitive arrays (Introsort variant)."},
+{t:"Sorting",d:"Medium",q:"Shell sort improves upon insertion sort by?",o:["Using a heap","Sorting elements far apart first, gradually reducing gap","Using divide and conquer","Counting occurrences"],a:1,e:"Shell sort uses decreasing gap sequences; sorting far-apart elements reduces inversions."},
+{t:"Sorting",d:"Easy",q:"Which sort algorithm is most commonly used in practice for general-purpose sorting?",o:["Bubble sort","Quicksort (or Introsort variant)","Selection sort","Counting sort"],a:1,e:"Quicksort with optimizations (median-of-three, Introsort fallback) is fastest in practice."},
+{t:"Sorting",d:"Medium",q:"Bucket sort distributes elements into buckets, then sorts each bucket. Best case?",o:["O(n²)","O(n + k)","O(n log n)","O(n)"],a:1,e:"With n elements uniformly distributed into n buckets with O(1) elements each: O(n+k)."},
+{t:"Sorting",d:"Hard",q:"Patience sorting builds piles to find LIS length. Number of piles equals?",o:["n","Length of LIS","n/2","sqrt(n)"],a:1,e:"The number of piles in patience sorting equals the length of the longest increasing subsequence."},
+{t:"Sorting",d:"Easy",q:"What is the time complexity of finding an element in a sorted array of n elements?",o:["O(1)","O(n)","O(log n)","O(n log n)"],a:2,e:"Binary search on a sorted array: O(log n)."},
+{t:"Sorting",d:"Medium",q:"Sort an array with only 0s and 1s. Most efficient approach?",o:["Merge sort","Count 0s and fill","Two pointers partition","Bubble sort"],a:2,e:"Two pointers partition in a single pass: O(n), O(1) space."},
+{t:"Sorting",d:"Medium",q:"Minimum number of swaps to sort an array. This is related to?",o:["Number of inversions","Cycle decomposition of the permutation","Number of comparisons","Merge passes"],a:1,e:"Minimum swaps = n - (number of cycles in the permutation)."},
+{t:"Sorting",d:"Hard",q:"External sort merge phase merges k sorted runs of total n records. Optimal number of merge passes?",o:["log_k(n/B) passes where B is buffer size","n/k passes","k passes","log n passes"],a:0,e:"Each pass merges k runs; number of passes = ⌈log_k(n/B)⌉."},
+{t:"Sorting",d:"Easy",q:"Insertion sort runs in O(n) when?",o:["Array is random","Array is sorted in reverse","Array is already sorted","Array has all duplicates"],a:2,e:"For an already-sorted array, each element is immediately in its correct position: O(n)."},
+{t:"Sorting",d:"Medium",q:"Find the inversion count of an array. Modified merge sort approach time complexity?",o:["O(n²)","O(n log n)","O(n)","O(n log² n)"],a:1,e:"Count inversions during the merge step: O(n log n)."},
+{t:"Sorting",d:"Hard",q:"Order statistics tree supports select (kth smallest) and rank in?",o:["O(n)","O(log n)","O(1)","O(n log n)"],a:1,e:"Augmenting a BST with subtree sizes allows select and rank in O(log n)."},
+{t:"Sorting",d:"Easy",q:"Merge of two sorted halves in merge sort takes?",o:["O(1)","O(log n)","O(n)","O(n²)"],a:2,e:"Merging two sorted arrays of combined size n requires O(n) comparisons."},
+{t:"Sorting",d:"Medium",q:"Stable partition: move all elements satisfying predicate to front, preserving relative order. Time?",o:["O(n)","O(n log n)","O(n²)","O(1)"],a:0,e:"Two-pass stable partition using auxiliary array: O(n) time, O(n) space."},
+{t:"Sorting",d:"Hard",q:"Comparison sort lower bound proof uses a decision tree with at least n! leaves. Height is?",o:["n","log(n!)=Ω(n log n)","n²","n/2"],a:1,e:"A binary decision tree with ≥ n! leaves has height ≥ log₂(n!) = Ω(n log n)."},
+{t:"Sorting",d:"Easy",q:"Which sort is best for sorting a nearly-sorted (k-sorted) array with small k?",o:["Quick sort","Merge sort","Insertion sort","Radix sort"],a:2,e:"Insertion sort has O(nk) complexity for k-sorted arrays, which is O(n) for small k."},
+{t:"Sorting",d:"Medium",q:"Wiggle sort I: arrange so arr[0]≤arr[1]≥arr[2]≤…. Simplest O(n) approach?",o:["Sort then interleave","One pass: swap adjacent pair if violating condition","Two pointers","Stack"],a:1,e:"Iterate pairs; if adjacent elements violate the pattern, swap them: O(n), O(1) space."},
+{t:"Sorting",d:"Hard",q:"Sort list of strings by multiple criteria (length, then alphabetical). Stable sort guarantees?",o:["Faster run","Correct multi-key ordering when applied in reverse key order","Consistent memory use","No duplicate entries"],a:1,e:"Stable sort applied from least significant key to most significant key correctly handles multi-criteria ordering."},
+
+// ─── EXTRA HASH TABLES ───────────────────────────────────────────────────────
+{t:"Hash Tables",d:"Easy",q:"What is a hash function's primary job?",o:["Sort keys","Map keys to array indices","Find duplicates","Encrypt data"],a:1,e:"A hash function maps an arbitrary key to a fixed-range integer index."},
+{t:"Hash Tables",d:"Medium",q:"Rabin-Karp substring search uses hashing. Average time complexity?",o:["O(n*m)","O(n+m)","O(n log m)","O(m log n)"],a:1,e:"Rolling hash allows O(1) hash update per position: O(n+m) average."},
+{t:"Hash Tables",d:"Easy",q:"What makes two objects equal in a hash map (Java)?",o:["Same address","equals() returns true AND same hashCode()","Only equals()","Only hashCode()"],a:1,e:"Both equals() and hashCode() must be consistent; equal objects must have equal hash codes."},
+{t:"Hash Tables",d:"Hard",q:"Cuckoo hashing ensures worst-case O(1) lookup by?",o:["One hash function","Using two hash functions and evicting existing keys","Sorted chains","Open addressing with quadratic probe"],a:1,e:"Cuckoo hashing uses two tables; a key occupies one of two positions (one per table): O(1) worst-case lookup."},
+{t:"Hash Tables",d:"Medium",q:"What is the birthday paradox and how does it relate to hash collisions?",o:["No relation","With ~√n keys in a table of size n, a collision probability is ~50%","Collisions only happen at n/2","Guaranteed collision at n+1 keys"],a:1,e:"Birthday paradox: ~√(2n) random keys give ~50% collision probability in table of size n."},
+{t:"Hash Tables",d:"Easy",q:"Given a string, find the first non-repeating character. HashMap usage?",o:["Store index → char","Store char → frequency, then scan for frequency 1","Store sorted chars","Store all pairs"],a:1,e:"First pass: count frequencies. Second pass: return first char with frequency 1."},
+{t:"Hash Tables",d:"Medium",q:"Sparse matrix is best stored as?",o:["2D array","Hash map from (row,col) → value","Linked list","BST"],a:1,e:"Hash map only stores non-zero entries: O(non-zeros) space vs O(m*n) for 2D array."},
+{t:"Hash Tables",d:"Hard",q:"Count the number of pairs with XOR equal to k. Time complexity?",o:["O(n²)","O(n)","O(n log n)","O(k)"],a:1,e:"For each element x, check if x XOR k is in the hash set: O(n)."},
+{t:"Hash Tables",d:"Medium",q:"Anagram groups: key for grouping anagrams efficiently (O(n*m) total)?",o:["First character","Sorted string or character frequency array as key","Length","Last character"],a:1,e:"Sort each word or use a character count tuple as hash key: O(n*m log m) or O(n*m)."},
+{t:"Hash Tables",d:"Easy",q:"HashSet vs HashMap: HashSet stores?",o:["Key-value pairs","Keys only (no associated values)","Values only","Sorted keys"],a:1,e:"HashSet stores unique keys (values); HashMap stores key-value pairs."},
+{t:"Hash Tables",d:"Hard",q:"Count of subarrays with XOR equal to k (using prefix XOR and hash map). Time complexity?",o:["O(n²)","O(n)","O(n log n)","O(k)"],a:1,e:"prefix_xor[0..i] XOR prefix_xor[0..j-1] = k; hash map counts previous prefix XOR values: O(n)."},
+{t:"Hash Tables",d:"Medium",q:"Longest arithmetic subsequence using DP with hash map. State?",o:["dp[i] = length","dp[i][diff] = length of arithmetic subseq ending at i with common diff","dp[diff] = indices","None"],a:1,e:"For each pair (i,j), dp[i][diff] = dp[j][diff] + 1 where diff = arr[i]-arr[j]."},
+{t:"Hash Tables",d:"Easy",q:"What problem does a Bloom filter solve?",o:["Exact membership test","Probabilistic membership test (no false negatives)","Sorting","Shortest path"],a:1,e:"Bloom filter answers 'definitely not in set' or 'probably in set', with no false negatives."},
+{t:"Hash Tables",d:"Medium",q:"Random pick with weight (weighted random selection). Preprocessing uses?",o:["Sorting","Prefix sum array + binary search","Hash map","Max-heap"],a:1,e:"Build prefix sum array; random [0, total) value → binary search gives O(log n) pick."},
+{t:"Hash Tables",d:"Hard",q:"LRU Cache: which data structure combination gives O(1) for both get and put?",o:["Array + hash map","Doubly linked list + hash map","Binary tree + hash map","Skip list + hash map"],a:1,e:"Hash map gives O(1) key lookup; doubly linked list maintains recency order with O(1) move/remove."},
+{t:"Hash Tables",d:"Easy",q:"Time complexity of checking if two strings are anagrams using hash map?",o:["O(n log n)","O(n)","O(n²)","O(1)"],a:1,e:"Count characters in both strings (O(n) each) and compare counts: O(n)."},
+
+// ─── EXTRA HEAPS ─────────────────────────────────────────────────────────────
+{t:"Heaps",d:"Medium",q:"What is a Fibonacci heap and its key advantage?",o:["Heap with Fibonacci sequence values","Amortized O(1) decrease-key and O(log n) delete-min","Always balanced","Sorts in O(n)"],a:1,e:"Fibonacci heap gives amortized O(1) insert and decrease-key, improving Dijkstra to O(E + V log V)."},
+{t:"Heaps",d:"Easy",q:"Max-heap property after insertion is restored by?",o:["Heapify-down (sift-down)","Heapify-up (sift-up/bubble-up)","Sorting","Rotation"],a:1,e:"New element inserted at end, then bubbled up until heap property is restored."},
+{t:"Heaps",d:"Medium",q:"In a binary max-heap, the second-largest element is found in?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:1,e:"Second-largest is one of the root's children: check both (O(1)), but removing root to find it takes O(log n)."},
+{t:"Heaps",d:"Hard",q:"Leftist heap merge operation time complexity?",o:["O(n)","O(log n)","O(1)","O(n log n)"],a:1,e:"Leftist heap merges along right spines of O(log n) length: O(log n)."},
+{t:"Heaps",d:"Easy",q:"A d-ary heap (d children per node) has height?",o:["O(n)","O(log_d n)","O(n/d)","O(d log n)"],a:1,e:"Height of d-ary heap with n elements: ⌊log_d n⌋."},
+{t:"Heaps",d:"Medium",q:"Connect n ropes with minimum cost (sum of all merge costs). Use?",o:["Greedy with sorted array","Min-heap: always merge two smallest","Max-heap","DP"],a:1,e:"Always merge the two smallest ropes (Huffman-like): min-heap gives O(n log n)."},
+{t:"Heaps",d:"Hard",q:"Binomial heap supports merge in?",o:["O(n)","O(log n)","O(1)","O(n log n)"],a:1,e:"Merging two binomial heaps of sizes n and m takes O(log n + log m) = O(log n) time."},
+{t:"Heaps",d:"Medium",q:"Find if a given array represents a min-heap?",o:["Sort and compare","Check arr[i] ≤ arr[2i+1] and arr[i] ≤ arr[2i+2] for all valid i","BFS traversal","DFS traversal"],a:1,e:"For each internal node, verify both children are greater or equal: O(n)."},
+{t:"Heaps",d:"Easy",q:"Priority queue in C++ STL (std::priority_queue) is by default a?",o:["Min-heap","Max-heap","Sorted array","AVL tree"],a:1,e:"C++ std::priority_queue is a max-heap by default (largest element at top)."},
+{t:"Heaps",d:"Hard",q:"Heap used in Prim's MST algorithm. Time complexity improvement over naive O(V²)?",o:["O(E log V) with binary heap","O(E + V log V) with Fibonacci heap","Both A and B","No improvement"],a:2,e:"Binary heap gives O(E log V); Fibonacci heap gives O(E + V log V) for dense graphs."},
+{t:"Heaps",d:"Medium",q:"Why can't a heap be used as a sorted output structure directly?",o:["It requires sorted input","Heap only guarantees root is min/max, not full sorted order","It's too slow","It uses too much space"],a:1,e:"Extracting all elements from a heap in order requires O(n log n) total, not immediate sorted access."},
+{t:"Heaps",d:"Easy",q:"In a min-heap with n elements, the maximum element can be found in?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:2,e:"The maximum element in a min-heap is among the leaf nodes, requiring O(n) scan."},
+{t:"Heaps",d:"Hard",q:"Huffman coding tree uses a greedy algorithm with a min-heap. Time complexity?",o:["O(n)","O(n log n)","O(n²)","O(n log² n)"],a:1,e:"n-1 merge operations, each heap operation O(log n): O(n log n)."},
+{t:"Heaps",d:"Medium",q:"Heap vs BST: heaps are better than BSTs for?",o:["Search by key","Finding minimum/maximum","In-order traversal","Range queries"],a:1,e:"Heap gives O(1) min/max access; BST needs O(log n) but supports ordered traversal and search."},
+{t:"Heaps",d:"Easy",q:"Parent of node at index i (0-indexed) in a heap array?",o:["2i+1","2i","(i-1)/2","i/2"],a:2,e:"Parent of node i is at index ⌊(i-1)/2⌋."},
+{t:"Heaps",d:"Hard",q:"Virtual (indexed) priority queue supports decrease-key. What extra structure is needed?",o:["Sorted array","Position map (key → heap index)","BST","Stack"],a:1,e:"A position map tracks each key's current index in the heap, enabling O(log n) decrease-key."},
+{t:"Heaps",d:"Medium",q:"K-way merge using a min-heap. Why is the heap size exactly k (not more)?",o:["Memory constraint","We insert one element from each of the k lists: never more than k in heap","For speed","To avoid duplicates"],a:1,e:"One element per list is in the heap at any time; on extraction, the next element from that list enters."},
+{t:"Heaps",d:"Easy",q:"Heapify-down (sift-down) in a max-heap: swaps current node with?",o:["Smaller child","Larger child","Left child always","Right child always"],a:1,e:"Swap with the larger child to restore max-heap property during sift-down."},
+{t:"Heaps",d:"Hard",q:"Pairing heap amortized cost of decrease-key operation?",o:["O(1)","O(log log n)","O(log n)","Θ(log n) confirmed"],a:1,e:"Pairing heap decrease-key is conjectured O(log log n) amortized; it outperforms Fibonacci heaps in practice."},
+{t:"Heaps",d:"Medium",q:"Meeting rooms II (minimum conference rooms needed). Heap approach?",o:["Sort by duration, count rooms","Sort by start time, min-heap of end times","Max-heap of all intervals","BFS on interval graph"],a:1,e:"Sort meetings by start time; min-heap tracks end times of occupied rooms; if earliest end ≤ new start, reuse."},
+
+// ─── EXTRA DP ────────────────────────────────────────────────────────────────
+{t:"Dynamic Programming",d:"Easy",q:"Space-optimized LCS uses rolling arrays, reducing space from O(n*m) to?",o:["O(n+m)","O(min(n,m))","O(1)","O(n log m)"],a:1,e:"Only two rows of the DP table needed at a time: O(min(n,m)) space."},
+{t:"Dynamic Programming",d:"Medium",q:"Maximum sum of non-adjacent elements in a circular array. Approach?",o:["Run linear house robber once","Run linear house robber twice (include/exclude first element)","DP on circular structure","Greedy"],a:1,e:"Run House Robber on arr[0..n-2] and arr[1..n-1]; take the maximum."},
+{t:"Dynamic Programming",d:"Hard",q:"Shortest superstring (cover all words). Uses?",o:["Greedy","DP with bitmask over word subsets","Suffix array","BFS"],a:1,e:"Bitmask DP: state = set of used words; dp[mask][i] = min length ending with word i using mask words."},
+{t:"Dynamic Programming",d:"Medium",q:"Number of ways to tile a 2×n board with 1×2 dominoes. Recurrence?",o:["dp[n] = dp[n-1]+dp[n-2]","dp[n] = 2*dp[n-1]","dp[n] = dp[n-1]*dp[n-2]","dp[n] = n!"],a:0,e:"Place a vertical domino (dp[n-1]) or two horizontal ones (dp[n-2]): Fibonacci recurrence."},
+{t:"Dynamic Programming",d:"Hard",q:"Minimum cost polygon triangulation. Time complexity?",o:["O(n²)","O(n³)","O(2^n)","O(n log n)"],a:1,e:"Interval DP choosing diagonal for each triangulation: O(n³)."},
+{t:"Dynamic Programming",d:"Medium",q:"Paint fence (n posts, k colors, no three adjacent same color). Recurrence involves?",o:["dp[i] = k*dp[i-1]","same[i] and diff[i] tracking last two posts","dp[i] = dp[i-1]+dp[i-2]","None"],a:1,e:"Track same[i] (same color as previous) and diff[i] (different), combining to prevent three-in-a-row."},
+{t:"Dynamic Programming",d:"Easy",q:"Fibonacci using bottom-up DP with O(1) space stores only?",o:["All n values","Last two values","Last three values","None"],a:1,e:"F(n) depends only on F(n-1) and F(n-2): store only two variables."},
+{t:"Dynamic Programming",d:"Hard",q:"Minimum cost to merge stones. State and time complexity?",o:["O(n²) state, O(n²)","O(n²) state, O(n³)","O(n³) state, O(n³)","O(2^n) state"],a:1,e:"dp[i][j] = min cost to merge piles i..j; transition over split points: O(n²) states × O(n) transitions = O(n³)."},
+{t:"Dynamic Programming",d:"Medium",q:"Counting paths in grid with obstacles. What marks an obstacle cell in the DP table?",o:["Value 1","Value 0 (no path through it)","Value -1","Infinity"],a:1,e:"If a cell has an obstacle, dp[i][j] = 0 (no paths can pass through it)."},
+{t:"Dynamic Programming",d:"Hard",q:"Stock trading with transaction fee. DP states?",o:["Price only","hold/cash (two states)","hold/cash/cooldown","Number of transactions"],a:1,e:"Two states: hold (holding stock) and cash (no stock), plus fee deducted on sell."},
+{t:"Dynamic Programming",d:"Medium",q:"Longest string chain (word can be predecessor if one letter is deleted). Approach?",o:["BFS","DP sorted by length — for each word, check all single-deletion predecessors","Backtracking","Greedy"],a:1,e:"Sort by length; dp[word] = max dp[predecessor]+1 for all predecessors of word."},
+{t:"Dynamic Programming",d:"Easy",q:"What does the term 'overlapping subproblems' mean in DP?",o:["Subproblems share input data","The same subproblems are solved multiple times during recursion","Subproblems overlap in time","Memory overlap"],a:1,e:"Overlapping subproblems: the same sub-computation recurs; memoization/tabulation avoids recomputation."},
+{t:"Dynamic Programming",d:"Hard",q:"Minimum insertions to make string palindrome. Relation to LPS?",o:["Insertions = n - LCS(s,reverse(s))","Insertions = n - LPS(s)","Insertions = n/2","Insertions = LCS(s,s)"],a:1,e:"Minimum insertions = n - LPS(s), since we need to insert characters to match what's missing from the palindrome."},
+{t:"Dynamic Programming",d:"Medium",q:"Arithmetic slices (count subarrays with common difference). DP insight?",o:["dp[i] = dp[i-1]+1 if arithmetic with prev two","dp[i] = 2*dp[i-1]","dp[i] = dp[i-1]+dp[i-2]","dp[i] = i"],a:0,e:"If arr[i]-arr[i-1] == arr[i-1]-arr[i-2], dp[i] = dp[i-1]+1, adding dp[i] new slices."},
+
+// ─── EXTRA BACKTRACKING ───────────────────────────────────────────────────────
+{t:"Backtracking",d:"Medium",q:"Rat in a maze problem: find all paths. Backtracking marks visited cells to avoid?",o:["Duplicates","Infinite loops / revisiting","Incorrect paths","Short paths"],a:1,e:"Marking visited cells prevents the rat from revisiting the same cell in the current path."},
+{t:"Backtracking",d:"Hard",q:"Exact cover problem (like Sudoku, N-Queens). Algorithm X with Dancing Links runs in?",o:["O(n!)","O(n²)","Exponential worst case but very fast in practice","O(n log n)"],a:2,e:"Algorithm X (Knuth's Dancing Links) is exponential worst case but prunes heavily, solving Sudoku instantly."},
+{t:"Backtracking",d:"Medium",q:"Tug of war: split n elements into two groups minimizing sum difference. Approach?",o:["Greedy","Backtracking with pruning","DP only","Sorting"],a:1,e:"Backtracking tries all partitions, prunes when current difference already exceeds best found."},
+{t:"Backtracking",d:"Easy",q:"What is pruning in backtracking?",o:["Removing duplicate elements","Abandoning a branch early when it cannot lead to a valid solution","Sorting the choices","Using memoization"],a:1,e:"Pruning cuts off search branches that are provably invalid, reducing the search space."},
+{t:"Backtracking",d:"Hard",q:"Graph coloring with k colors: backtracking assigns colors one vertex at a time, time complexity?",o:["O(k^V)","O(V*k)","O(V²)","O(k!)"],a:0,e:"Each of V vertices can be one of k colors: O(k^V) worst case."},
+{t:"Backtracking",d:"Medium",q:"Remove invalid parentheses (all minimum removals). BFS vs backtracking?",o:["BFS guarantees minimum removals first","Backtracking is always faster","DFS without pruning","Sorting strings"],a:0,e:"BFS explores by number of removals level by level; the first valid level gives minimum-removal solutions."},
+{t:"Backtracking",d:"Easy",q:"Power set (all subsets) of n elements: which choice is made at each step?",o:["Greedy largest element","Include or exclude current element (binary choice)","Sort and include all","Merge halves"],a:1,e:"At each element, backtracking branches: include it or skip it — two choices, 2^n total subsets."},
+{t:"Backtracking",d:"Hard",q:"Traveling salesman with backtracking and bounding. Lower bound computed using?",o:["Greedy tour cost","MST or minimum edge cost of unvisited nodes","Sorted edge weights","Average edge cost"],a:1,e:"Branch and bound uses MST of remaining nodes as a lower bound to prune unpromising paths."},
+{t:"Backtracking",d:"Medium",q:"All paths from source to target in a DAG (backtracking). What ensures termination?",o:["Cycle detection","DAG property (no cycles) guarantees finite paths","Visited array","Sorted adjacency list"],a:1,e:"A DAG has no cycles, so DFS/backtracking terminates when it reaches the target or a dead end."},
+{t:"Backtracking",d:"Easy",q:"How does backtracking differ from brute force?",o:["Backtracking is always slower","Backtracking prunes branches that cannot lead to solutions, unlike pure brute force","They are identical","Brute force uses recursion; backtracking does not"],a:1,e:"Backtracking prunes invalid branches early; brute force explores all combinations regardless."},
+{t:"Backtracking",d:"Medium",q:"Combination sum III (exactly k numbers summing to n, digits 1-9, no reuse). Branching factor?",o:["9","k","n","9-k"],a:0,e:"At each step, at most 9 choices (digits 1-9); k depth gives O(9^k) worst case."},
+{t:"Backtracking",d:"Hard",q:"Expression add operators (+,-,*) to reach target value. Why is multiplication hard to handle?",o:["Precedence: must track previous operand to undo multiplication","It overflows","Multiplication is not associative","Too many branches"],a:0,e:"Multiplication changes the previously accumulated sum; track 'prev' operand to subtract and re-multiply."},
+{t:"Backtracking",d:"Medium",q:"Count good strings (binary strings with specific properties). Backtracking vs DP?",o:["Backtracking is optimal","DP is preferred to avoid exponential recomputation","They have equal complexity","Greedy is better"],a:1,e:"Counting problems with overlapping subproblems are better solved with DP (memoization)."},
+{t:"Backtracking",d:"Easy",q:"In backtracking, after a recursive call returns, what must be done?",o:["Nothing","Undo the choice made before the call (restore state)","Make another recursive call","Reset all variables"],a:1,e:"Backtracking restores state after each recursive call so other branches see an unmodified state."},
+{t:"Backtracking",d:"Hard",q:"Minimum steps to reach target (BFS) vs backtracking: which is preferred for shortest path?",o:["Backtracking","BFS guarantees shortest path in unweighted graphs","Both equally","DFS"],a:1,e:"BFS explores states level by level (by distance), guaranteeing the shortest path when found."},
+{t:"Backtracking",d:"Medium",q:"Gray code sequence (n-bit, each consecutive pair differs by one bit). Recursive generation uses?",o:["Greedy","Backtracking/recursion: prefix with 0 or 1","DP","Sorting"],a:1,e:"Reflect-and-prefix: generate n-1 Gray code, prefix first half with 0, reflected half with 1."},
+{t:"Backtracking",d:"Easy",q:"Phone keypad letters (2='abc', 3='def', etc.). For 4 digits, max combinations?",o:["12","81","256","4^4"],a:1,e:"Each digit maps to at most 4 letters; 4^4 = 256 combinations maximum, but typical is 3^4=81."},
+{t:"Backtracking",d:"Hard",q:"Number of distinct ways to place n non-attacking rooks on n×n board?",o:["n!","2^n","n²","C(n²,n)"],a:0,e:"Exactly one rook per row and column: n! permutations of column assignments."},
+{t:"Backtracking",d:"Medium",q:"Distribute coins (tree). Why is DFS/post-order used instead of backtracking?",o:["Backtracking is needed","DFS post-order naturally accumulates excess coins from subtrees","BFS is better","Greedy works"],a:1,e:"Post-order computes each subtree's excess; moves = |excess| for each node, no backtracking needed."},
+{t:"Heaps",d:"Medium",q:"Rearrange string k distance apart (same chars at least k apart). Greedy with?",o:["Min-heap","Max-heap + cooldown queue","Sorted array","Stack"],a:1,e:"Max-heap picks most frequent char; cooldown queue holds chars that can't be used yet for k steps."},
+{t:"Heaps",d:"Easy",q:"What is the time complexity of deleting an arbitrary element from a heap (given its index)?",o:["O(1)","O(log n)","O(n)","O(n log n)"],a:1,e:"Replace with last element, then heapify-up or heapify-down as needed: O(log n)."},
+{t:"Heaps",d:"Hard",q:"IPO problem (maximize capital by completing at most k projects). Two-heap approach?",o:["Min-heap of profits","Max-heap of profits for affordable projects + min-heap of capitals","Sort projects","BFS"],a:1,e:"Min-heap of capitals finds available projects; max-heap of profits picks the best: O(n log n)."},
+{t:"Heaps",d:"Medium",q:"Heap vs sorted array: for a dynamic set with frequent inserts and max queries, which is better?",o:["Sorted array","Heap","BST","Hash map"],a:1,e:"Heap gives O(log n) insert and O(1) max; sorted array has O(n) insert."},
+{t:"Heaps",d:"Easy",q:"Heap sort is NOT stable because?",o:["It uses recursion","Heapify swaps non-adjacent elements, altering relative order of equal elements","It uses extra space","It is O(n²)"],a:1,e:"Heap sort swaps elements far apart during heapify, breaking relative order of equal elements."},
+{t:"Heaps",d:"Hard",q:"Minimum number of refueling stops (greedy + max-heap). Time complexity?",o:["O(n)","O(n log n)","O(n²)","O(2^n)"],a:1,e:"Push reachable stations' fuel into max-heap; pop when tank empty: O(n log n)."},
+{t:"Heaps",d:"Medium",q:"The 'ugly numbers' problem (numbers whose only prime factors are 2, 3, 5). Heap approach?",o:["Sieve of Eratosthenes","Min-heap + hash set to avoid duplicates","Brute force","DP"],a:1,e:"Min-heap: extract minimum, push ×2, ×3, ×5 variants (use set to dedup): O(n log n)."},
+{t:"Heaps",d:"Easy",q:"n-th largest element in an infinite stream — which heap type is most memory-efficient?",o:["Max-heap of all elements","Min-heap of size n","Max-heap of size n","Sorted array"],a:1,e:"Min-heap of size n: the root is always the nth largest element seen so far."},
+{t:"Heaps",d:"Hard",q:"Swim in rising water (2D grid). Minimum time to reach bottom-right. Algorithm?",o:["BFS","Dijkstra / min-heap on grid","DFS","Binary search + BFS"],a:1,e:"Min-heap on (time, row, col): always process the lowest-time cell, like Dijkstra: O(n² log n)."},
+{t:"Heaps",d:"Medium",q:"Kth smallest prime fraction. Which heap is initialized with?",o:["All fractions","First fraction p[0]/p[last] and expand","Max-heap of all primes","Sorted primes"],a:1,e:"Min-heap initialized with fractions p[i]/p[last] for each i; expand by incrementing denominator index."},
+{t:"Backtracking",d:"Medium",q:"Distribute numbers into two groups to minimize the difference of their sums. Technique?",o:["Greedy","Backtracking exploring all 2^n splits","Counting sort","DP on sum"],a:1,e:"Backtracking tries all 2^n assignments; with pruning (early termination) it's practical for small n."},
+{t:"Linked Lists",d:"Hard",q:"Design a data structure with push, pop, peek, and getMin all O(1). Requires?",o:["Single stack","Two stacks (main + min-tracking auxiliary)","Linked list only","Queue"],a:1,e:"Auxiliary stack tracks the minimum at each level; main stack holds data; both updated on push/pop."},
+];
+
+// ─── State ─────────────────────────────────────────────────────────────────────
+let filtered = [...ALL_QUESTIONS];
+let answers = {}; // index in filtered → chosen option index
+let correct = 0, wrong = 0;
+
+// Populate topic filter
+const topics = [...new Set(ALL_QUESTIONS.map(q=>q.t))];
+const tf = document.getElementById('topicFilter');
+topics.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;tf.appendChild(o);});
+
+function applyFilters(){
+  const top=document.getElementById('topicFilter').value;
+  const dif=document.getElementById('diffFilter').value;
+  filtered=ALL_QUESTIONS.filter(q=>(top==='All'||q.t===top)&&(dif==='All'||q.d===dif));
+  answers={};correct=0;wrong=0;
+  renderAll();
+}
+
+function shuffleAndReset(){
+  const top=document.getElementById('topicFilter').value;
+  const dif=document.getElementById('diffFilter').value;
+  filtered=ALL_QUESTIONS.filter(q=>(top==='All'||q.t===top)&&(dif==='All'||q.d===dif));
+  for(let i=filtered.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[filtered[i],filtered[j]]=[filtered[j],filtered[i]];}
+  answers={};correct=0;wrong=0;
+  renderAll();
+}
+
+function resetAll(){
+  document.getElementById('topicFilter').value='All';
+  document.getElementById('diffFilter').value='All';
+  filtered=[...ALL_QUESTIONS];
+  answers={};correct=0;wrong=0;
+  renderAll();
+}
+
+function showScore(){
+  const total=filtered.length;
+  const ans=Object.keys(answers).length;
+  alert(`Score: ${correct}/${ans} answered (${total} total)\nCorrect: ${correct}  Wrong: ${wrong}  Unanswered: ${total-ans}`);
+}
+
+function renderAll(){
+  const area=document.getElementById('quiz-area');
+  area.innerHTML='';
+  updateStats();
+  filtered.forEach((q,i)=>{
+    const card=document.createElement('div');
+    card.className='question-card';
+    card.id='card-'+i;
+    const state=answers[i];
+    if(state!==undefined){card.classList.add(state===q.a?'correct':'wrong');}
+    card.innerHTML=`
+      <div class="q-header">
+        <span class="q-num">#${i+1}</span>
+        <span class="q-topic">${q.t}</span>
+        <span class="q-diff ${q.d}">${q.d}</span>
+      </div>
+      <div class="question-text">${q.q}</div>
+      <div class="options" id="opts-${i}">
+        ${q.o.map((opt,oi)=>`<button class="option-btn${state!==undefined?(oi===q.a?' correct-ans':(oi===state?' wrong-ans':'')):(state===oi?' selected':'')}" onclick="choose(${i},${oi})" ${state!==undefined?'disabled':''}>${opt}</button>`).join('')}
+      </div>
+      <div class="explanation${state!==undefined?' show':''}" id="exp-${i}">💡 ${q.e}</div>`;
+    area.appendChild(card);
+  });
+}
+
+function choose(qi,oi){
+  if(answers[qi]!==undefined)return;
+  answers[qi]=oi;
+  const q=filtered[qi];
+  const card=document.getElementById('card-'+qi);
+  if(oi===q.a){correct++;card.classList.add('correct');}
+  else{wrong++;card.classList.add('wrong');}
+  const btns=document.querySelectorAll(`#opts-${qi} .option-btn`);
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.a)b.classList.add('correct-ans');
+    else if(i===oi)b.classList.add('wrong-ans');
+  });
+  document.getElementById(`exp-${qi}`).classList.add('show');
+  document.getElementById('sc').textContent=correct;
+  document.getElementById('tot').textContent=Object.keys(answers).length;
+  updateStats();
+}
+
+function updateStats(){
+  document.getElementById('showing').textContent=filtered.length;
+  document.getElementById('answered').textContent=Object.keys(answers).length;
+  document.getElementById('correct-count').textContent=correct;
+  document.getElementById('wrong-count').textContent=wrong;
+}
+
+renderAll();
+</script>
+</body>
+</html>
