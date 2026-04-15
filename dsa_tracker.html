@@ -404,6 +404,62 @@
   }
   .tip-box.visible { display: block; }
 
+  /* PATTERN RECOGNITION */
+  .pattern-recog-toggle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--accent);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    text-decoration: underline dotted;
+    transition: color 0.15s;
+    margin-top: 2px;
+    display: inline-block;
+  }
+  .pattern-recog-toggle:hover { color: var(--learn); }
+
+  .pattern-recog-box {
+    display: none;
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: rgba(124,106,247,0.07);
+    border-left: 2px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.75rem;
+    color: var(--text);
+    line-height: 1.5;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .pattern-recog-box.visible { display: block; }
+
+  .pattern-recog-box .recog-label {
+    font-size: 0.6rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 2px;
+    font-weight: 500;
+  }
+
+  .pattern-recog-box .recog-text {
+    margin-bottom: 6px;
+  }
+
+  .linked-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(124,106,247,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(124,106,247,0.3);
+    display: inline-block;
+    margin-right: 4px;
+    margin-top: 2px;
+  }
+
   /* RESET BTN */
   .reset-btn {
     font-family: 'JetBrains Mono', monospace;
@@ -494,13 +550,13 @@ const PATTERNS = [
   {
     id: 1, name: "Sliding Window",
     learn: [
-      { name: "Maximum Sum Subarray of Size K", diff: "easy", lc: 643, tip: null },
-      { name: "Longest Substring Without Repeating Characters", diff: "medium", lc: 3, tip: null },
-      { name: "Fruit Into Baskets", diff: "medium", lc: 904, tip: null },
-      { name: "Permutation in String", diff: "medium", lc: 567, tip: null },
-      { name: "Find All Anagrams in a String", diff: "medium", lc: 438, tip: null },
-      { name: "Longest Repeating Character Replacement", diff: "medium", lc: 424, tip: null },
-      { name: "Longest Substring with At Most K Distinct Characters", diff: "medium", lc: 340, tip: null },
+      { name: "Maximum Sum Subarray of Size K", diff: "easy", lc: 643, tip: null, pattern: "Find a value across a fixed-size contiguous subarray", intuition: "Use a sliding window of exactly K elements. Maintain a running sum by adding the rightmost element and removing the leftmost when the window slides.", linkedPractice: [5] },
+      { name: "Longest Substring Without Repeating Characters", diff: "medium", lc: 3, tip: null, pattern: "Find the longest substring satisfying a uniqueness constraint", intuition: "Expand the window right. When a duplicate is found, shrink from the left past the previous occurrence. Use a hash set or map to track characters.", linkedPractice: [2] },
+      { name: "Fruit Into Baskets", diff: "medium", lc: 904, tip: null, pattern: "Maximum subarray with at most K distinct elements", intuition: "Variable-size window with a frequency map. Shrink the window when distinct count exceeds K. Track the max window size.", linkedPractice: [3] },
+      { name: "Permutation in String", diff: "medium", lc: 567, tip: null, pattern: "Check if one string's permutation exists as a substring of another", intuition: "Fixed-size window matching a character frequency. Slide window of size len(s1) over s2, comparing frequency counts at each position.", linkedPractice: [7] },
+      { name: "Find All Anagrams in a String", diff: "medium", lc: 438, tip: null, pattern: "Find all starting positions where an anagram/permutation appears", intuition: "Same as permutation check but collect all valid window positions. Maintain a match counter that tracks how many character frequencies match.", linkedPractice: [8] },
+      { name: "Longest Repeating Character Replacement", diff: "medium", lc: 424, tip: null, pattern: "Longest substring achievable with at most K modifications", intuition: "Window is valid when (window_size - max_freq_char) ≤ K. Expand right always, shrink left only when invalid. Track the highest frequency character.", linkedPractice: [0] },
+      { name: "Longest Substring with At Most K Distinct Characters", diff: "medium", lc: 340, tip: null, pattern: "Find longest window with a bounded number of distinct elements", intuition: "Expand right, adding to a frequency map. When distinct count exceeds K, shrink left until constraint is met. Update max length at each valid state.", linkedPractice: [9] },
     ],
     practice: [
       { name: "Minimum Window Substring", diff: "hard", lc: 76, tip: null },
@@ -523,13 +579,13 @@ const PATTERNS = [
   {
     id: 2, name: "Prefix Sum",
     learn: [
-      { name: "Range Sum Query - Immutable", diff: "easy", lc: 303, tip: null },
-      { name: "Find Pivot Index", diff: "easy", lc: 724, tip: null },
-      { name: "Running Sum of 1d Array", diff: "easy", lc: 1480, tip: null },
-      { name: "Product of Array Except Self", diff: "medium", lc: 238, tip: null },
-      { name: "Subarray Sum Equals K", diff: "medium", lc: 560, tip: null },
-      { name: "Contiguous Array", diff: "medium", lc: 525, tip: null },
-      { name: "Subarray Sums Divisible by K", diff: "medium", lc: 974, tip: null },
+      { name: "Range Sum Query - Immutable", diff: "easy", lc: 303, tip: null, pattern: "Repeatedly query the sum of a subarray range", intuition: "Precompute prefix sums. Answer any range [i,j] in O(1) as prefix[j+1] - prefix[i].", linkedPractice: [0] },
+      { name: "Find Pivot Index", diff: "easy", lc: 724, tip: null, pattern: "Find a position where left sum equals right sum", intuition: "Compute total sum. Scan left-to-right tracking left sum. At each index, right sum = total - left - current. Check equality.", linkedPractice: [5] },
+      { name: "Running Sum of 1d Array", diff: "easy", lc: 1480, tip: null, pattern: "Transform an array into its cumulative sum", intuition: "Iterate and accumulate: prefix[i] = prefix[i-1] + arr[i]. This is the building block for all prefix sum problems.", linkedPractice: [7] },
+      { name: "Product of Array Except Self", diff: "medium", lc: 238, tip: null, pattern: "Compute a value for each element using all other elements", intuition: "Build left-product and right-product prefix arrays. Result[i] = leftProduct[i] × rightProduct[i]. Avoids division.", linkedPractice: [6] },
+      { name: "Subarray Sum Equals K", diff: "medium", lc: 560, tip: null, pattern: "Count subarrays with a specific sum", intuition: "Use a hash map of prefix sums. At each index, check if (currentPrefix - K) exists in the map. That count gives valid subarrays ending here.", linkedPractice: [2] },
+      { name: "Contiguous Array", diff: "medium", lc: 525, tip: null, pattern: "Find longest subarray with equal count of two values", intuition: "Replace 0s with -1s, then find longest subarray with sum 0. Use a hash map storing the first occurrence of each prefix sum.", linkedPractice: [3] },
+      { name: "Subarray Sums Divisible by K", diff: "medium", lc: 974, tip: null, pattern: "Count subarrays whose sum satisfies a divisibility condition", intuition: "Two prefix sums with the same remainder mod K define a valid subarray. Count remainders using a hash map; use combination formula.", linkedPractice: [9] },
     ],
     practice: [
       { name: "Range Sum Query 2D - Immutable", diff: "medium", lc: 304, tip: null },
@@ -552,13 +608,13 @@ const PATTERNS = [
   {
     id: 3, name: "Two Pointers",
     learn: [
-      { name: "Valid Palindrome", diff: "easy", lc: 125, tip: null },
-      { name: "Two Sum II - Input Array Is Sorted", diff: "medium", lc: 167, tip: null },
-      { name: "Remove Duplicates from Sorted Array", diff: "easy", lc: 26, tip: null },
-      { name: "Move Zeroes", diff: "easy", lc: 283, tip: null },
-      { name: "Sort Colors", diff: "medium", lc: 75, tip: null },
-      { name: "Container With Most Water", diff: "medium", lc: 11, tip: null },
-      { name: "3Sum", diff: "medium", lc: 15, tip: null },
+      { name: "Valid Palindrome", diff: "easy", lc: 125, tip: null, pattern: "Check symmetry by comparing elements from both ends", intuition: "Place pointers at start and end. Move inward, comparing characters. Skip non-alphanumeric characters.", linkedPractice: [5] },
+      { name: "Two Sum II - Input Array Is Sorted", diff: "medium", lc: 167, tip: null, pattern: "Find a pair in a sorted array that satisfies a sum condition", intuition: "Left and right pointers. If sum too small, move left right. If too large, move right left. Sorted order guarantees convergence.", linkedPractice: [9] },
+      { name: "Remove Duplicates from Sorted Array", diff: "easy", lc: 26, tip: null, pattern: "Remove duplicates in-place from a sorted sequence", intuition: "Slow pointer marks the write position. Fast pointer scans ahead. Write only when a new unique element is found.", linkedPractice: [2] },
+      { name: "Move Zeroes", diff: "easy", lc: 283, tip: null, pattern: "Partition or rearrange elements in-place based on a condition", intuition: "Slow pointer tracks next non-zero position. Fast pointer scans all elements. Swap non-zero elements to the slow pointer position.", linkedPractice: [4] },
+      { name: "Sort Colors", diff: "medium", lc: 75, tip: null, pattern: "Sort array with a small number of distinct values in one pass", intuition: "Three-way partition (Dutch National Flag). Use three pointers: low, mid, high. Swap 0s to low, 2s to high, advance mid.", linkedPractice: [3] },
+      { name: "Container With Most Water", diff: "medium", lc: 11, tip: null, pattern: "Maximize area or product formed by two boundary elements", intuition: "Two pointers at both ends. Calculate area. Move the shorter pointer inward — moving the taller one can never increase the area.", linkedPractice: [0] },
+      { name: "3Sum", diff: "medium", lc: 15, tip: null, pattern: "Find triplets that satisfy a sum condition", intuition: "Sort the array. Fix one element, then use two-pointer on the remaining sorted subarray. Skip duplicates to avoid repeat triplets.", linkedPractice: [1] },
     ],
     practice: [
       { name: "Trapping Rain Water", diff: "hard", lc: 42, tip: null },
@@ -581,13 +637,13 @@ const PATTERNS = [
   {
     id: 4, name: "Fast & Slow Pointers",
     learn: [
-      { name: "Linked List Cycle", diff: "easy", lc: 141, tip: null },
-      { name: "Linked List Cycle II", diff: "medium", lc: 142, tip: null },
-      { name: "Middle of the Linked List", diff: "easy", lc: 876, tip: null },
-      { name: "Happy Number", diff: "easy", lc: 202, tip: null },
-      { name: "Palindrome Linked List", diff: "easy", lc: 234, tip: null },
-      { name: "Find the Duplicate Number", diff: "medium", lc: 287, tip: null },
-      { name: "Circular Array Loop", diff: "medium", lc: 457, tip: null },
+      { name: "Linked List Cycle", diff: "easy", lc: 141, tip: null, pattern: "Detect if a sequence or linked structure contains a cycle", intuition: "Slow moves 1 step, fast moves 2 steps. If they meet, a cycle exists. If fast reaches null, no cycle.", linkedPractice: [5] },
+      { name: "Linked List Cycle II", diff: "medium", lc: 142, tip: null, pattern: "Find the entry point of a cycle in a linked structure", intuition: "After detecting the cycle (fast meets slow), reset one pointer to head. Move both one step at a time — they meet at cycle start.", linkedPractice: [3] },
+      { name: "Middle of the Linked List", diff: "easy", lc: 876, tip: null, pattern: "Find the middle element without knowing the length", intuition: "Slow moves 1, fast moves 2. When fast reaches end, slow is at middle. Works because fast covers distance at 2× speed.", linkedPractice: [4] },
+      { name: "Happy Number", diff: "easy", lc: 202, tip: null, pattern: "Detect a cycle in a number transformation sequence", intuition: "The digit-square-sum sequence either reaches 1 or cycles. Apply Floyd's cycle detection on the transformation function.", linkedPractice: [9] },
+      { name: "Palindrome Linked List", diff: "easy", lc: 234, tip: null, pattern: "Check symmetry of a linked list", intuition: "Find middle using fast/slow. Reverse second half in place. Compare both halves node by node.", linkedPractice: [6] },
+      { name: "Find the Duplicate Number", diff: "medium", lc: 287, tip: null, pattern: "Find a duplicate in a sequence mapping indices to values", intuition: "Treat array as an implicit linked list where arr[i] points to arr[arr[i]]. Use Floyd's algorithm to find the cycle entry = duplicate.", linkedPractice: [2] },
+      { name: "Circular Array Loop", diff: "medium", lc: 457, tip: null, pattern: "Detect a cycle in an array where values indicate jump direction/distance", intuition: "For each unvisited index, use fast/slow pointers following the jumps. Verify the cycle is valid (same direction, length > 1).", linkedPractice: [8] },
     ],
     practice: [
       { name: "Reorder List", diff: "medium", lc: 143, tip: null },
@@ -610,13 +666,13 @@ const PATTERNS = [
   {
     id: 5, name: "LinkedList In-place Reversal",
     learn: [
-      { name: "Reverse Linked List", diff: "easy", lc: 206, tip: null },
-      { name: "Reverse Linked List II", diff: "medium", lc: 92, tip: null },
-      { name: "Swap Nodes in Pairs", diff: "medium", lc: 24, tip: null },
-      { name: "Reverse Nodes in k-Group", diff: "hard", lc: 25, tip: null },
-      { name: "Reorder List", diff: "medium", lc: 143, tip: null },
-      { name: "Rotate List", diff: "medium", lc: 61, tip: null },
-      { name: "Reverse Nodes in Even Length Groups", diff: "medium", lc: 2074, tip: null },
+      { name: "Reverse Linked List", diff: "easy", lc: 206, tip: null, pattern: "Reverse the order of nodes in a linked list", intuition: "Iterate with prev, curr, next. At each step: save next, point curr.next to prev, advance prev and curr. Three-pointer technique.", linkedPractice: [0] },
+      { name: "Reverse Linked List II", diff: "medium", lc: 92, tip: null, pattern: "Reverse only a specific portion of a linked list (from position m to n)", intuition: "Navigate to position m-1 (connection point). Reverse the sublist from m to n using the standard technique. Reconnect the boundaries.", linkedPractice: [2] },
+      { name: "Swap Nodes in Pairs", diff: "medium", lc: 24, tip: null, pattern: "Swap every two adjacent nodes", intuition: "Use a dummy head. For each pair, redirect pointers: prev.next = second, first.next = second.next, second.next = first. Advance by 2.", linkedPractice: [4] },
+      { name: "Reverse Nodes in k-Group", diff: "hard", lc: 25, tip: null, pattern: "Reverse nodes in groups of size K", intuition: "Check if K nodes remain. If yes, reverse that group in-place and connect to previous group's tail. If not, leave remaining as-is.", linkedPractice: [7] },
+      { name: "Reorder List", diff: "medium", lc: 143, tip: null, pattern: "Interleave nodes from the start and end of a list", intuition: "Find middle, reverse second half, then merge/interleave both halves. Combines three core linked list techniques.", linkedPractice: [6] },
+      { name: "Rotate List", diff: "medium", lc: 61, tip: null, pattern: "Rotate the list by K positions", intuition: "Find length, connect tail to head (make circular). Then break at position (length - k % length) to form the new head.", linkedPractice: [5] },
+      { name: "Reverse Nodes in Even Length Groups", diff: "medium", lc: 2074, tip: null, pattern: "Reverse nodes conditionally based on group properties", intuition: "Track group sizes incrementally. For even-length groups, reverse in-place. For odd-length groups, skip. Handle the last partial group correctly.", linkedPractice: [9] },
     ],
     practice: [
       { name: "Palindrome Linked List", diff: "easy", lc: 234, tip: null },
@@ -639,13 +695,13 @@ const PATTERNS = [
   {
     id: 6, name: "Monotonic Stack",
     learn: [
-      { name: "Next Greater Element I", diff: "easy", lc: 496, tip: null },
-      { name: "Next Greater Element II", diff: "medium", lc: 503, tip: null },
-      { name: "Daily Temperatures", diff: "medium", lc: 739, tip: null },
-      { name: "Online Stock Span", diff: "medium", lc: 901, tip: null },
-      { name: "Sum of Subarray Minimums", diff: "medium", lc: 907, tip: null },
-      { name: "Remove Duplicate Letters", diff: "medium", lc: 316, tip: null },
-      { name: "132 Pattern", diff: "medium", lc: 456, tip: null },
+      { name: "Next Greater Element I", diff: "easy", lc: 496, tip: null, pattern: "For each element, find the next element that is greater", intuition: "Traverse right-to-left (or left-to-right). Maintain a decreasing stack. Pop elements smaller than current — current becomes their answer.", linkedPractice: [4] },
+      { name: "Next Greater Element II", diff: "medium", lc: 503, tip: null, pattern: "Next greater element in a circular array", intuition: "Same as NGE but iterate through the array twice (2n iterations) using modular indexing to simulate the circular property.", linkedPractice: [5] },
+      { name: "Daily Temperatures", diff: "medium", lc: 739, tip: null, pattern: "Find how many steps until a larger value appears", intuition: "Stack stores indices. When current value > stack top's value, pop and record the distance. Monotonic decreasing stack of indices.", linkedPractice: [6] },
+      { name: "Online Stock Span", diff: "medium", lc: 901, tip: null, pattern: "For each element, count consecutive preceding elements satisfying a condition", intuition: "Maintain a decreasing stack of (value, span) pairs. Pop all ≤ current, accumulating their spans into current span.", linkedPractice: [7] },
+      { name: "Sum of Subarray Minimums", diff: "medium", lc: 907, tip: null, pattern: "Compute a value based on the minimum/maximum of all subarrays", intuition: "For each element, find how many subarrays it is the minimum of using Previous Less Element and Next Less Element from monotonic stacks.", linkedPractice: [0] },
+      { name: "Remove Duplicate Letters", diff: "medium", lc: 316, tip: null, pattern: "Build the lexicographically smallest sequence with unique characters", intuition: "Use a monotonic increasing stack. Pop larger chars if they appear later. Track used chars with a set and remaining counts.", linkedPractice: [8] },
+      { name: "132 Pattern", diff: "medium", lc: 456, tip: null, pattern: "Find three elements where a[i] < a[k] < a[j] with i < j < k", intuition: "Traverse right-to-left with a decreasing stack tracking the third element. When popping, update the maximum third. If current < third, pattern found.", linkedPractice: [9] },
     ],
     practice: [
       { name: "Largest Rectangle in Histogram", diff: "hard", lc: 84, tip: null },
@@ -668,13 +724,13 @@ const PATTERNS = [
   {
     id: 7, name: "Top K Elements",
     learn: [
-      { name: "Kth Largest Element in an Array", diff: "medium", lc: 215, tip: null },
-      { name: "Top K Frequent Elements", diff: "medium", lc: 347, tip: null },
-      { name: "K Closest Points to Origin", diff: "medium", lc: 973, tip: null },
-      { name: "Kth Largest Element in a Stream", diff: "easy", lc: 703, tip: null },
-      { name: "Kth Smallest Element in a Sorted Matrix", diff: "medium", lc: 378, tip: null },
-      { name: "Sort Characters By Frequency", diff: "medium", lc: 451, tip: null },
-      { name: "Reorganize String", diff: "medium", lc: 767, tip: null },
+      { name: "Kth Largest Element in an Array", diff: "medium", lc: 215, tip: null, pattern: "Find the Kth largest/smallest element", intuition: "Use a min-heap of size K. The top of the heap is the Kth largest. Or use QuickSelect for O(n) average.", linkedPractice: [0] },
+      { name: "Top K Frequent Elements", diff: "medium", lc: 347, tip: null, pattern: "Find the K most frequent elements", intuition: "Count frequencies with a hash map. Use a min-heap of size K on (frequency, element) pairs. Or use bucket sort by frequency.", linkedPractice: [6] },
+      { name: "K Closest Points to Origin", diff: "medium", lc: 973, tip: null, pattern: "Find K items closest to a reference point by some metric", intuition: "Use a max-heap of size K keyed on distance. If a new point is closer than heap top, replace it. Heap maintains K closest.", linkedPractice: [3] },
+      { name: "Kth Largest Element in a Stream", diff: "easy", lc: 703, tip: null, pattern: "Maintain the Kth largest element as data arrives in a stream", intuition: "Keep a min-heap of size K. Each new element: add to heap, if size > K, pop minimum. Heap top is always the Kth largest.", linkedPractice: [7] },
+      { name: "Kth Smallest Element in a Sorted Matrix", diff: "medium", lc: 378, tip: null, pattern: "Find Kth element in a structured multi-dimensional dataset", intuition: "Use a min-heap initialized with the first element of each row. Pop min, push the next element from the same row. The Kth pop is the answer.", linkedPractice: [1] },
+      { name: "Sort Characters By Frequency", diff: "medium", lc: 451, tip: null, pattern: "Sort or arrange elements by their frequency of occurrence", intuition: "Count frequencies, then sort by frequency descending. Use a heap or bucket sort. Build result string from highest to lowest frequency.", linkedPractice: [2] },
+      { name: "Reorganize String", diff: "medium", lc: 767, tip: null, pattern: "Rearrange elements so no two adjacent elements are the same", intuition: "Use a max-heap. Always place the most frequent character next. Alternate between the top two most frequent to prevent adjacency.", linkedPractice: [8] },
     ],
     practice: [
       { name: "Find Median from Data Stream", diff: "hard", lc: 295, tip: null },
@@ -697,13 +753,13 @@ const PATTERNS = [
   {
     id: 8, name: "Overlapping Intervals",
     learn: [
-      { name: "Merge Intervals", diff: "medium", lc: 56, tip: null },
-      { name: "Insert Interval", diff: "medium", lc: 57, tip: null },
-      { name: "Non-overlapping Intervals", diff: "medium", lc: 435, tip: null },
-      { name: "Meeting Rooms", diff: "easy", lc: 252, tip: null },
-      { name: "Meeting Rooms II", diff: "medium", lc: 253, tip: null },
-      { name: "Minimum Number of Arrows to Burst Balloons", diff: "medium", lc: 452, tip: null },
-      { name: "Car Pooling", diff: "medium", lc: 1094, tip: null },
+      { name: "Merge Intervals", diff: "medium", lc: 56, tip: null, pattern: "Merge overlapping ranges given a list of intervals", intuition: "Sort by start time. Iterate: if current overlaps with last merged, extend the end. Otherwise, push a new interval.", linkedPractice: [6] },
+      { name: "Insert Interval", diff: "medium", lc: 57, tip: null, pattern: "Insert a new interval into a sorted list and merge if needed", intuition: "Add all intervals before the new one. Merge overlapping ones with the new interval. Add remaining intervals after.", linkedPractice: [0] },
+      { name: "Non-overlapping Intervals", diff: "medium", lc: 435, tip: null, pattern: "Find the minimum number of intervals to remove to eliminate overlaps", intuition: "Sort by end time. Greedily keep intervals that end earliest. Count how many conflict with the last kept interval.", linkedPractice: [5] },
+      { name: "Meeting Rooms", diff: "easy", lc: 252, tip: null, pattern: "Determine if a person can attend all meetings (no overlaps)", intuition: "Sort by start time. Check if any meeting starts before the previous one ends. If yes, there's a conflict.", linkedPractice: [4] },
+      { name: "Meeting Rooms II", diff: "medium", lc: 253, tip: null, pattern: "Find the minimum number of resources needed for overlapping events", intuition: "Use a min-heap of end times. For each meeting, if it starts after heap top ends, reuse that room (pop). Always push current end.", linkedPractice: [9] },
+      { name: "Minimum Number of Arrows to Burst Balloons", diff: "medium", lc: 452, tip: null, pattern: "Find the minimum number of points that cover all intervals", intuition: "Sort by end point. Shoot at the earliest ending balloon. Skip all balloons that this arrow covers. Count arrows needed.", linkedPractice: [7] },
+      { name: "Car Pooling", diff: "medium", lc: 1094, tip: null, pattern: "Check if capacity is exceeded at any point during a sequence of events", intuition: "Use a difference array or sweep line. Add passengers at pickup, subtract at drop-off. Check if running sum ever exceeds capacity.", linkedPractice: [8] },
     ],
     practice: [
       { name: "Interval List Intersections", diff: "medium", lc: 986, tip: null },
@@ -726,13 +782,13 @@ const PATTERNS = [
   {
     id: 9, name: "Modified Binary Search",
     learn: [
-      { name: "Binary Search", diff: "easy", lc: 704, tip: null },
-      { name: "Search Insert Position", diff: "easy", lc: 35, tip: null },
-      { name: "Find Minimum in Rotated Sorted Array", diff: "medium", lc: 153, tip: null },
-      { name: "Search in Rotated Sorted Array", diff: "medium", lc: 33, tip: null },
-      { name: "Find Peak Element", diff: "medium", lc: 162, tip: null },
-      { name: "Koko Eating Bananas", diff: "medium", lc: 875, tip: null },
-      { name: "Capacity To Ship Packages Within D Days", diff: "medium", lc: 1011, tip: null },
+      { name: "Binary Search", diff: "easy", lc: 704, tip: null, pattern: "Search for a target in a sorted array", intuition: "Compare target with mid element. Eliminate half the search space each step. Classic O(log n) divide and conquer.", linkedPractice: [0] },
+      { name: "Search Insert Position", diff: "easy", lc: 35, tip: null, pattern: "Find where an element would be inserted in sorted order", intuition: "Standard binary search. If not found, the left pointer gives the insertion position. This is the lower_bound concept.", linkedPractice: [1] },
+      { name: "Find Minimum in Rotated Sorted Array", diff: "medium", lc: 153, tip: null, pattern: "Find the minimum in a rotated sorted sequence", intuition: "Compare mid with right. If mid > right, minimum is in right half. Otherwise, it is in left half (including mid). Converge to minimum.", linkedPractice: [3] },
+      { name: "Search in Rotated Sorted Array", diff: "medium", lc: 33, tip: null, pattern: "Search for a target in a rotated sorted array", intuition: "Determine which half is sorted by comparing mid with left. If target is in the sorted half's range, search there; otherwise search the other half.", linkedPractice: [4] },
+      { name: "Find Peak Element", diff: "medium", lc: 162, tip: null, pattern: "Find a local maximum in an unsorted array", intuition: "If mid < mid+1, a peak exists to the right. Otherwise, a peak exists to the left (or mid is the peak). Binary search on the slope.", linkedPractice: [5] },
+      { name: "Koko Eating Bananas", diff: "medium", lc: 875, tip: null, pattern: "Minimize/maximize a value subject to a feasibility constraint", intuition: "Binary search on the answer. For each candidate speed, check if Koko can finish in time. Find the minimum feasible speed.", linkedPractice: [6] },
+      { name: "Capacity To Ship Packages Within D Days", diff: "medium", lc: 1011, tip: null, pattern: "Find the minimum capacity that satisfies a constraint over partitions", intuition: "Binary search on the ship capacity. For each candidate, greedily simulate loading and count days. Find minimum capacity that fits in D days.", linkedPractice: [8] },
     ],
     practice: [
       { name: "Search a 2D Matrix", diff: "medium", lc: 74, tip: null },
@@ -755,13 +811,13 @@ const PATTERNS = [
   {
     id: 10, name: "Binary Tree Traversal",
     learn: [
-      { name: "Binary Tree Inorder Traversal", diff: "easy", lc: 94, tip: null },
-      { name: "Binary Tree Preorder Traversal", diff: "easy", lc: 144, tip: null },
-      { name: "Binary Tree Postorder Traversal", diff: "easy", lc: 145, tip: null },
-      { name: "Binary Tree Level Order Traversal", diff: "medium", lc: 102, tip: null },
-      { name: "Binary Tree Zigzag Level Order Traversal", diff: "medium", lc: 103, tip: null },
-      { name: "Validate Binary Search Tree", diff: "medium", lc: 98, tip: null },
-      { name: "Symmetric Tree", diff: "easy", lc: 101, tip: null },
+      { name: "Binary Tree Inorder Traversal", diff: "easy", lc: 94, tip: null, pattern: "Process tree nodes in left-root-right order", intuition: "Recursively visit left subtree, process root, then right. For BSTs, this yields sorted order. Iterative version uses a stack.", linkedPractice: [0] },
+      { name: "Binary Tree Preorder Traversal", diff: "easy", lc: 144, tip: null, pattern: "Process tree nodes in root-left-right order", intuition: "Process root first, then recursively visit left and right. Useful for serialization and creating copies of the tree.", linkedPractice: [7] },
+      { name: "Binary Tree Postorder Traversal", diff: "easy", lc: 145, tip: null, pattern: "Process tree nodes in left-right-root order (children before parent)", intuition: "Recursively visit both children first, then process root. Essential when computation depends on children's results (e.g., height, subtree sum).", linkedPractice: [5] },
+      { name: "Binary Tree Level Order Traversal", diff: "medium", lc: 102, tip: null, pattern: "Process tree nodes level by level", intuition: "Use a queue (BFS). Process all nodes at current level, enqueue their children. Track level boundaries by queue size at each step.", linkedPractice: [6] },
+      { name: "Binary Tree Zigzag Level Order Traversal", diff: "medium", lc: 103, tip: null, pattern: "Level-order but alternating left-to-right and right-to-left", intuition: "Standard BFS level order, but reverse alternate levels. Use a flag to toggle direction and reverse the level list when needed.", linkedPractice: [3] },
+      { name: "Validate Binary Search Tree", diff: "medium", lc: 98, tip: null, pattern: "Verify BST property: all left descendants < root < all right descendants", intuition: "Pass valid range [min, max] down the tree. Each node must be within its range. Or do inorder traversal and check sorted order.", linkedPractice: [1] },
+      { name: "Symmetric Tree", diff: "easy", lc: 101, tip: null, pattern: "Check if a tree is a mirror image of itself", intuition: "Compare left subtree with right subtree recursively. Left.left mirrors Right.right, and Left.right mirrors Right.left.", linkedPractice: [2] },
     ],
     practice: [
       { name: "Average of Levels in Binary Tree", diff: "easy", lc: 637, tip: null },
@@ -784,13 +840,13 @@ const PATTERNS = [
   {
     id: 11, name: "Depth-First Search (DFS)",
     learn: [
-      { name: "Maximum Depth of Binary Tree", diff: "easy", lc: 104, tip: null },
-      { name: "Path Sum", diff: "easy", lc: 112, tip: null },
-      { name: "Number of Islands", diff: "medium", lc: 200, tip: null },
-      { name: "Clone Graph", diff: "medium", lc: 133, tip: null },
-      { name: "Flood Fill", diff: "easy", lc: 733, tip: null },
-      { name: "Course Schedule", diff: "medium", lc: 207, tip: null },
-      { name: "Pacific Atlantic Water Flow", diff: "medium", lc: 417, tip: null },
+      { name: "Maximum Depth of Binary Tree", diff: "easy", lc: 104, tip: null, pattern: "Find the depth or height of a tree", intuition: "DFS returning 1 + max(left_depth, right_depth). Base case: null node returns 0. Recursion naturally explores all paths.", linkedPractice: [0] },
+      { name: "Path Sum", diff: "easy", lc: 112, tip: null, pattern: "Check if a root-to-leaf path with a target sum exists", intuition: "DFS subtracting current node's value from target. At a leaf, check if remaining target is 0. Backtrack on failure.", linkedPractice: [4] },
+      { name: "Number of Islands", diff: "medium", lc: 200, tip: null, pattern: "Count connected components in a grid", intuition: "Scan grid for unvisited land. DFS/BFS to mark all connected land cells as visited. Each new DFS start = one island.", linkedPractice: [3] },
+      { name: "Clone Graph", diff: "medium", lc: 133, tip: null, pattern: "Create a deep copy of a graph structure", intuition: "DFS with a visited map {original → clone}. For each node, create its clone, then recursively clone all neighbors.", linkedPractice: [5] },
+      { name: "Flood Fill", diff: "easy", lc: 733, tip: null, pattern: "Change all connected same-colored cells to a new color", intuition: "DFS from the starting cell. Visit all 4-directionally connected cells with the same original color. Mark them with the new color.", linkedPractice: [7] },
+      { name: "Course Schedule", diff: "medium", lc: 207, tip: null, pattern: "Detect if a directed graph has a cycle (topological sort feasibility)", intuition: "DFS with three states: unvisited, in-progress, done. If you visit an in-progress node, a cycle exists. Or use BFS (Kahn's algorithm).", linkedPractice: [9] },
+      { name: "Pacific Atlantic Water Flow", diff: "medium", lc: 417, tip: null, pattern: "Find cells that can reach two boundaries", intuition: "Reverse thinking: DFS from each ocean inward (going uphill). Cells reachable from both oceans are the answer. Use two visited sets.", linkedPractice: [8] },
     ],
     practice: [
       { name: "Diameter of Binary Tree", diff: "easy", lc: 543, tip: null },
@@ -813,13 +869,13 @@ const PATTERNS = [
   {
     id: 12, name: "Breadth-First Search (BFS)",
     learn: [
-      { name: "Binary Tree Level Order Traversal", diff: "medium", lc: 102, tip: null },
-      { name: "Rotting Oranges", diff: "medium", lc: 994, tip: null },
-      { name: "01 Matrix", diff: "medium", lc: 542, tip: null },
-      { name: "Shortest Path in Binary Matrix", diff: "medium", lc: 1091, tip: null },
-      { name: "Walls and Gates", diff: "medium", lc: 286, tip: null },
-      { name: "Word Ladder", diff: "hard", lc: 127, tip: null },
-      { name: "As Far from Land as Possible", diff: "medium", lc: 1162, tip: null },
+      { name: "Binary Tree Level Order Traversal", diff: "medium", lc: 102, tip: null, pattern: "Process nodes layer by layer in a tree or graph", intuition: "Use a queue. Process all nodes at current depth, enqueue children. Queue size at start of each iteration gives the level size.", linkedPractice: [0] },
+      { name: "Rotting Oranges", diff: "medium", lc: 994, tip: null, pattern: "Spread a state from multiple sources simultaneously", intuition: "Multi-source BFS. Enqueue all initial sources (rotten oranges). Each BFS level = one time unit. Count levels until all reachable cells are processed.", linkedPractice: [7] },
+      { name: "01 Matrix", diff: "medium", lc: 542, tip: null, pattern: "Find shortest distance from each cell to the nearest target", intuition: "Multi-source BFS from all target cells simultaneously. Distance propagates outward. Each cell gets its distance when first visited.", linkedPractice: [2] },
+      { name: "Shortest Path in Binary Matrix", diff: "medium", lc: 1091, tip: null, pattern: "Find the shortest path in an unweighted grid", intuition: "BFS from start to end. BFS guarantees shortest path in unweighted graphs. Expand 8-directionally, track visited cells.", linkedPractice: [5] },
+      { name: "Walls and Gates", diff: "medium", lc: 286, tip: null, pattern: "Fill distances from multiple gates in a grid", intuition: "Multi-source BFS from all gates. Each empty room gets the distance from the nearest gate. BFS ensures shortest distances.", linkedPractice: [6] },
+      { name: "Word Ladder", diff: "hard", lc: 127, tip: null, pattern: "Find shortest transformation sequence between two words", intuition: "BFS where each word is a node, edges connect words differing by one character. Build neighbors by trying all 26 char substitutions.", linkedPractice: [4] },
+      { name: "As Far from Land as Possible", diff: "medium", lc: 1162, tip: null, pattern: "Find the cell with maximum distance to the nearest source", intuition: "Multi-source BFS from all land cells. The last cell reached by BFS has the maximum distance. Return the BFS depth of the last level.", linkedPractice: [8] },
     ],
     practice: [
       { name: "Minimum Depth of Binary Tree", diff: "easy", lc: 111, tip: null },
@@ -842,13 +898,13 @@ const PATTERNS = [
   {
     id: 13, name: "Matrix Traversal",
     learn: [
-      { name: "Number of Islands", diff: "medium", lc: 200, tip: null },
-      { name: "Flood Fill", diff: "easy", lc: 733, tip: null },
-      { name: "Max Area of Island", diff: "medium", lc: 695, tip: null },
-      { name: "Surrounded Regions", diff: "medium", lc: 130, tip: null },
-      { name: "Pacific Atlantic Water Flow", diff: "medium", lc: 417, tip: null },
-      { name: "Word Search", diff: "medium", lc: 79, tip: null },
-      { name: "Number of Closed Islands", diff: "medium", lc: 1254, tip: null },
+      { name: "Number of Islands", diff: "medium", lc: 200, tip: null, pattern: "Count connected components in a 2D grid", intuition: "Scan each cell. When an unvisited land cell is found, DFS/BFS to mark the entire island. Increment count for each new traversal.", linkedPractice: [5] },
+      { name: "Flood Fill", diff: "easy", lc: 733, tip: null, pattern: "Propagate a change through connected same-valued cells", intuition: "DFS from source cell, changing color of all 4-connected cells with the original color. Stop when reaching different colors or boundaries.", linkedPractice: [6] },
+      { name: "Max Area of Island", diff: "medium", lc: 695, tip: null, pattern: "Find the largest connected component by area", intuition: "DFS from each unvisited land cell, counting cells visited. Track the maximum count across all DFS calls.", linkedPractice: [9] },
+      { name: "Surrounded Regions", diff: "medium", lc: 130, tip: null, pattern: "Identify regions not connected to the boundary", intuition: "Start from boundary O cells, mark all connected Os as safe. Then flip all remaining unmarked Os to X.", linkedPractice: [2] },
+      { name: "Pacific Atlantic Water Flow", diff: "medium", lc: 417, tip: null, pattern: "Find cells satisfying reachability to multiple boundaries", intuition: "BFS/DFS from each ocean's boundary going uphill. Intersect cells reachable from both oceans.", linkedPractice: [4] },
+      { name: "Word Search", diff: "medium", lc: 79, tip: null, pattern: "Find if a path spelling a word exists in a grid", intuition: "Backtracking DFS from each cell. At each step, check 4 neighbors for the next character. Mark cells visited to avoid reuse.", linkedPractice: [7] },
+      { name: "Number of Closed Islands", diff: "medium", lc: 1254, tip: null, pattern: "Count regions of land not touching the grid boundary", intuition: "First, DFS from all boundary land cells to mark them. Then count remaining unvisited land connected components — those are closed islands.", linkedPractice: [8] },
     ],
     practice: [
       { name: "Shortest Path in Binary Matrix", diff: "medium", lc: 1091, tip: null },
@@ -871,13 +927,13 @@ const PATTERNS = [
   {
     id: 14, name: "Backtracking",
     learn: [
-      { name: "Subsets", diff: "medium", lc: 78, tip: null },
-      { name: "Permutations", diff: "medium", lc: 46, tip: null },
-      { name: "Combination Sum", diff: "medium", lc: 39, tip: null },
-      { name: "Generate Parentheses", diff: "medium", lc: 22, tip: null },
-      { name: "Letter Combinations of a Phone Number", diff: "medium", lc: 17, tip: null },
-      { name: "Subsets II", diff: "medium", lc: 90, tip: null },
-      { name: "Permutations II", diff: "medium", lc: 47, tip: null },
+      { name: "Subsets", diff: "medium", lc: 78, tip: null, pattern: "Generate all possible subsets/combinations", intuition: "For each element, choose to include or exclude it. Build subsets recursively, adding current element to the path, then backtracking.", linkedPractice: [4] },
+      { name: "Permutations", diff: "medium", lc: 46, tip: null, pattern: "Generate all possible orderings of elements", intuition: "At each position, try all unused elements. Mark as used, recurse for next position, then unmark (backtrack). n! total permutations.", linkedPractice: [8] },
+      { name: "Combination Sum", diff: "medium", lc: 39, tip: null, pattern: "Find all combinations that sum to a target (elements reusable)", intuition: "DFS with a running sum. At each step, try adding each candidate (from current index onward to avoid duplicates). Subtract from target; if 0, found a solution.", linkedPractice: [0] },
+      { name: "Generate Parentheses", diff: "medium", lc: 22, tip: null, pattern: "Generate all valid arrangements satisfying a structural constraint", intuition: "Backtrack with two counters: open and close. Add ( if open < n. Add ) if close < open. When length = 2n, record the result.", linkedPractice: [6] },
+      { name: "Letter Combinations of a Phone Number", diff: "medium", lc: 17, tip: null, pattern: "Generate all combinations from multiple choice groups", intuition: "Each digit maps to letters. Build combinations by choosing one letter per digit. Recursion depth = number of digits.", linkedPractice: [2] },
+      { name: "Subsets II", diff: "medium", lc: 90, tip: null, pattern: "Generate subsets when the input contains duplicates", intuition: "Sort first. Same as Subsets, but skip duplicate elements at the same recursion level. If nums[i] == nums[i-1] and i > start, skip.", linkedPractice: [1] },
+      { name: "Permutations II", diff: "medium", lc: 47, tip: null, pattern: "Generate unique permutations from a set with duplicates", intuition: "Sort first. Use a used[] array. Skip nums[i] if it equals nums[i-1] and nums[i-1] was not used in this path — prevents duplicate permutations.", linkedPractice: [5] },
     ],
     practice: [
       { name: "Combination Sum II", diff: "medium", lc: 40, tip: null },
@@ -900,13 +956,13 @@ const PATTERNS = [
   {
     id: 15, name: "Dynamic Programming",
     learn: [
-      { name: "Climbing Stairs", diff: "easy", lc: 70, tip: null },
-      { name: "House Robber", diff: "medium", lc: 198, tip: null },
-      { name: "Coin Change", diff: "medium", lc: 322, tip: null },
-      { name: "Longest Common Subsequence", diff: "medium", lc: 1143, tip: null },
-      { name: "Longest Increasing Subsequence", diff: "medium", lc: 300, tip: null },
-      { name: "Unique Paths", diff: "medium", lc: 62, tip: null },
-      { name: "Jump Game", diff: "medium", lc: 55, tip: null },
+      { name: "Climbing Stairs", diff: "easy", lc: 70, tip: null, pattern: "Count the number of ways to reach a goal with fixed step sizes", intuition: "dp[i] = dp[i-1] + dp[i-2]. Each step can be reached from one step or two steps back. Classic Fibonacci structure.", linkedPractice: [3] },
+      { name: "House Robber", diff: "medium", lc: 198, tip: null, pattern: "Maximize value with a constraint on adjacent selections", intuition: "dp[i] = max(dp[i-1], dp[i-2] + nums[i]). At each house, choose to rob (add value + skip previous) or skip.", linkedPractice: [2] },
+      { name: "Coin Change", diff: "medium", lc: 322, tip: null, pattern: "Find minimum/count of items to reach a target sum", intuition: "dp[amount] = min(dp[amount], dp[amount - coin] + 1) for each coin. Build bottom-up from 0 to target amount.", linkedPractice: [6] },
+      { name: "Longest Common Subsequence", diff: "medium", lc: 1143, tip: null, pattern: "Find the longest matching subsequence between two sequences", intuition: "dp[i][j] = if chars match, dp[i-1][j-1]+1. If not, max(dp[i-1][j], dp[i][j-1]). 2D table comparing both strings.", linkedPractice: [7] },
+      { name: "Longest Increasing Subsequence", diff: "medium", lc: 300, tip: null, pattern: "Find the longest subsequence satisfying an ordering constraint", intuition: "dp[i] = max length ending at i. For each j < i, if nums[j] < nums[i], dp[i] = max(dp[i], dp[j]+1). Or use patience sorting for O(n log n).", linkedPractice: [5] },
+      { name: "Unique Paths", diff: "medium", lc: 62, tip: null, pattern: "Count paths in a grid from top-left to bottom-right", intuition: "dp[i][j] = dp[i-1][j] + dp[i][j-1]. Each cell reachable from above or left. Base case: first row and column are all 1.", linkedPractice: [9] },
+      { name: "Jump Game", diff: "medium", lc: 55, tip: null, pattern: "Determine if a goal is reachable given variable step sizes", intuition: "Track the farthest reachable index. Scan left to right: if current index ≤ farthest, update farthest = max(farthest, i + nums[i]).", linkedPractice: [4] },
     ],
     practice: [
       { name: "Edit Distance", diff: "medium", lc: 72, tip: null },
@@ -929,13 +985,13 @@ const PATTERNS = [
   {
     id: 16, name: "Greedy",
     learn: [
-      { name: "Assign Cookies", diff: "easy", lc: 455, tip: null },
-      { name: "Lemonade Change", diff: "easy", lc: 860, tip: null },
-      { name: "Best Time to Buy and Sell Stock II", diff: "medium", lc: 122, tip: null },
-      { name: "Jump Game", diff: "medium", lc: 55, tip: null },
-      { name: "Gas Station", diff: "medium", lc: 134, tip: null },
-      { name: "Partition Labels", diff: "medium", lc: 763, tip: null },
-      { name: "Queue Reconstruction by Height", diff: "medium", lc: 406, tip: null },
+      { name: "Assign Cookies", diff: "easy", lc: 455, tip: null, pattern: "Match items to consumers optimally by sorting and pairing", intuition: "Sort both arrays. Try to satisfy the least greedy child with the smallest sufficient cookie. Two-pointer approach.", linkedPractice: [9] },
+      { name: "Lemonade Change", diff: "easy", lc: 860, tip: null, pattern: "Make change greedily using available denominations", intuition: "Track counts of $5 and $10 bills. For $10: give $5 change. For $20: prefer giving $10+$5, else three $5s. Always use larger bills first.", linkedPractice: [7] },
+      { name: "Best Time to Buy and Sell Stock II", diff: "medium", lc: 122, tip: null, pattern: "Maximize profit from multiple transactions on a sequence", intuition: "Collect every upward slope: if prices[i] > prices[i-1], add the difference. Equivalent to buying and selling on every profitable pair.", linkedPractice: [6] },
+      { name: "Jump Game", diff: "medium", lc: 55, tip: null, pattern: "Determine reachability by choosing the greedy best option at each step", intuition: "Track the farthest index reachable. At each position, extend the reach. If current position > farthest, unreachable.", linkedPractice: [0] },
+      { name: "Gas Station", diff: "medium", lc: 134, tip: null, pattern: "Find a starting point in a circular route where resources never run out", intuition: "If total gas ≥ total cost, a solution exists. Track running surplus; when it drops below 0, reset start to the next station.", linkedPractice: [2] },
+      { name: "Partition Labels", diff: "medium", lc: 763, tip: null, pattern: "Partition a sequence into minimum parts where each element appears in only one part", intuition: "Record last occurrence of each character. Extend current partition end to the farthest last occurrence. Cut when index reaches the end.", linkedPractice: [3] },
+      { name: "Queue Reconstruction by Height", diff: "medium", lc: 406, tip: null, pattern: "Reconstruct a sequence based on relative ordering constraints", intuition: "Sort by height descending, then by k ascending. Insert each person at index k in the result. Taller people placed first so subsequent inserts don't affect them.", linkedPractice: [4] },
     ],
     practice: [
       { name: "Jump Game II", diff: "medium", lc: 45, tip: null },
@@ -958,13 +1014,13 @@ const PATTERNS = [
   {
     id: 17, name: "Bit Manipulation",
     learn: [
-      { name: "Single Number", diff: "easy", lc: 136, tip: null },
-      { name: "Number of 1 Bits", diff: "easy", lc: 191, tip: null },
-      { name: "Counting Bits", diff: "easy", lc: 338, tip: null },
-      { name: "Power of Two", diff: "easy", lc: 231, tip: null },
-      { name: "Reverse Bits", diff: "easy", lc: 190, tip: null },
-      { name: "Missing Number", diff: "easy", lc: 268, tip: null },
-      { name: "Add Binary", diff: "easy", lc: 67, tip: null },
+      { name: "Single Number", diff: "easy", lc: 136, tip: null, pattern: "Find the unique element when all others appear in pairs", intuition: "XOR all elements. Pairs cancel out (a^a=0), leaving only the unique element. XOR is associative and commutative.", linkedPractice: [0] },
+      { name: "Number of 1 Bits", diff: "easy", lc: 191, tip: null, pattern: "Count the set bits in a number's binary representation", intuition: "Use n & (n-1) to clear the lowest set bit. Count iterations until n becomes 0. Each iteration removes exactly one 1-bit.", linkedPractice: [2] },
+      { name: "Counting Bits", diff: "easy", lc: 338, tip: null, pattern: "Compute bit counts for a range of numbers", intuition: "dp[i] = dp[i >> 1] + (i & 1). Each number's bit count relates to its right-shifted version plus the last bit.", linkedPractice: [3] },
+      { name: "Power of Two", diff: "easy", lc: 231, tip: null, pattern: "Check if a number has exactly one set bit", intuition: "A power of 2 has exactly one 1-bit. Check: n > 0 && (n & (n-1)) == 0. The trick clears the single set bit.", linkedPractice: [4] },
+      { name: "Reverse Bits", diff: "easy", lc: 190, tip: null, pattern: "Reverse the bit order of a number", intuition: "Extract bits one by one from the right, place them from the left. Shift result left and input right in each iteration.", linkedPractice: [5] },
+      { name: "Missing Number", diff: "easy", lc: 268, tip: null, pattern: "Find the missing element from a complete sequence", intuition: "XOR all indices (0 to n) with all array values. Pairs cancel, leaving the missing number. Alternatively, use sum formula.", linkedPractice: [9] },
+      { name: "Add Binary", diff: "easy", lc: 67, tip: null, pattern: "Perform binary arithmetic on string representations", intuition: "Process from right to left, adding digits plus carry. carry = sum / 2, current digit = sum % 2. Handle different string lengths.", linkedPractice: [6] },
     ],
     practice: [
       { name: "Single Number II", diff: "medium", lc: 137, tip: null },
@@ -987,13 +1043,13 @@ const PATTERNS = [
   {
     id: 18, name: "Binary Search",
     learn: [
-      { name: "Binary Search", diff: "easy", lc: 704, tip: null },
-      { name: "Search Insert Position", diff: "easy", lc: 35, tip: null },
-      { name: "First Bad Version", diff: "easy", lc: 278, tip: null },
-      { name: "Sqrt(x)", diff: "easy", lc: 69, tip: null },
-      { name: "Guess Number Higher or Lower", diff: "easy", lc: 374, tip: null },
-      { name: "Valid Perfect Square", diff: "easy", lc: 367, tip: null },
-      { name: "Peak Index in a Mountain Array", diff: "medium", lc: 852, tip: null },
+      { name: "Binary Search", diff: "easy", lc: 704, tip: null, pattern: "Search for an exact value in a sorted collection", intuition: "Classic binary search: compare mid with target, eliminate half. Left ≤ right loop condition. O(log n) time.", linkedPractice: [0] },
+      { name: "Search Insert Position", diff: "easy", lc: 35, tip: null, pattern: "Find the position where a value should be inserted to maintain sort order", intuition: "Binary search returning left pointer when element not found. Left pointer always points to the correct insertion position.", linkedPractice: [5] },
+      { name: "First Bad Version", diff: "easy", lc: 278, tip: null, pattern: "Find the first element satisfying a boolean condition in a sorted sequence", intuition: "Binary search on a boolean predicate. When mid is bad, search left half. When good, search right half. Converges to first bad.", linkedPractice: [3] },
+      { name: "Sqrt(x)", diff: "easy", lc: 69, tip: null, pattern: "Find the integer boundary where a monotonic function changes", intuition: "Binary search on answer space [0, x]. Check if mid*mid ≤ x. Find the largest mid satisfying this condition.", linkedPractice: [6] },
+      { name: "Guess Number Higher or Lower", diff: "easy", lc: 374, tip: null, pattern: "Interactive search with higher/lower feedback", intuition: "Classic binary search with API-based comparison. Adjust left/right based on the guess result. Converges in O(log n).", linkedPractice: [7] },
+      { name: "Valid Perfect Square", diff: "easy", lc: 367, tip: null, pattern: "Determine if a number satisfies a mathematical property using binary search", intuition: "Binary search for a number whose square equals n. If mid*mid == n, return true. Adjust bounds based on comparison.", linkedPractice: [9] },
+      { name: "Peak Index in a Mountain Array", diff: "medium", lc: 852, tip: null, pattern: "Find the peak in a unimodal sequence", intuition: "If mid < mid+1, peak is to the right. Otherwise, peak is to the left or at mid. Binary search on the slope direction.", linkedPractice: [8] },
     ],
     practice: [
       { name: "Find Minimum in Rotated Sorted Array", diff: "medium", lc: 153, tip: null },
@@ -1016,13 +1072,13 @@ const PATTERNS = [
   {
     id: 19, name: "Tries",
     learn: [
-      { name: "Implement Trie (Prefix Tree)", diff: "medium", lc: 208, tip: null },
-      { name: "Design Add and Search Words Data Structure", diff: "medium", lc: 211, tip: null },
-      { name: "Longest Common Prefix", diff: "easy", lc: 14, tip: null },
-      { name: "Replace Words", diff: "medium", lc: 648, tip: null },
-      { name: "Map Sum Pairs", diff: "medium", lc: 677, tip: null },
-      { name: "Search Suggestions System", diff: "medium", lc: 1268, tip: null },
-      { name: "Index Pairs of a String", diff: "easy", lc: 1065, tip: null },
+      { name: "Implement Trie (Prefix Tree)", diff: "medium", lc: 208, tip: null, pattern: "Need efficient prefix-based operations on a collection of strings", intuition: "Build a tree where each node represents a character. Children map to next characters. Mark word endings. Insert/search follow edges.", linkedPractice: [4] },
+      { name: "Design Add and Search Words Data Structure", diff: "medium", lc: 211, tip: null, pattern: "Search with wildcards or flexible matching in a word dictionary", intuition: "Trie with DFS. For regular chars, follow the edge. For wildcard, try all children. Return true if any path reaches a word end.", linkedPractice: [1] },
+      { name: "Longest Common Prefix", diff: "easy", lc: 14, tip: null, pattern: "Find the shared prefix among a set of strings", intuition: "Insert all words into a trie. Walk down from root while each node has exactly one child and is not a word end. The path is the LCP.", linkedPractice: [8] },
+      { name: "Replace Words", diff: "medium", lc: 648, tip: null, pattern: "Replace words with their shortest root/prefix from a dictionary", intuition: "Build a trie from roots. For each word in the sentence, walk the trie. If a root ending is found, replace the word with the root.", linkedPractice: [2] },
+      { name: "Map Sum Pairs", diff: "medium", lc: 677, tip: null, pattern: "Sum values for all keys sharing a prefix", intuition: "Store values in trie nodes at word ends. To sum a prefix, walk to the prefix node, then DFS to sum all values in the subtree.", linkedPractice: [9] },
+      { name: "Search Suggestions System", diff: "medium", lc: 1268, tip: null, pattern: "Suggest words matching a prefix as the user types", intuition: "Build a trie. For each prefix (growing by one char), DFS from that node to find up to 3 lexicographically smallest words.", linkedPractice: [6] },
+      { name: "Index Pairs of a String", diff: "easy", lc: 1065, tip: null, pattern: "Find all occurrences of dictionary words within a text", intuition: "Build a trie from dictionary words. For each starting position in the text, walk the trie and record indices whenever a word end is reached.", linkedPractice: [5] },
     ],
     practice: [
       { name: "Top K Frequent Words", diff: "medium", lc: 692, tip: null },
@@ -1045,13 +1101,13 @@ const PATTERNS = [
   {
     id: 20, name: "Divide & Conquer",
     learn: [
-      { name: "Merge Sorted Array", diff: "easy", lc: 88, tip: null },
-      { name: "Sort an Array", diff: "medium", lc: 912, tip: null },
-      { name: "Convert Sorted Array to Binary Search Tree", diff: "easy", lc: 108, tip: null },
-      { name: "Maximum Subarray", diff: "medium", lc: 53, tip: null },
-      { name: "Majority Element", diff: "easy", lc: 169, tip: null },
-      { name: "Search a 2D Matrix II", diff: "medium", lc: 240, tip: null },
-      { name: "Kth Largest Element in an Array", diff: "medium", lc: 215, tip: null },
+      { name: "Merge Sorted Array", diff: "easy", lc: 88, tip: null, pattern: "Merge two sorted sequences into one", intuition: "Start from the end of both arrays, placing the larger element at the back. This avoids overwriting and works in-place.", linkedPractice: [0] },
+      { name: "Sort an Array", diff: "medium", lc: 912, tip: null, pattern: "Sort using a divide-and-conquer sorting algorithm", intuition: "Merge sort: split array in half, sort each recursively, merge sorted halves. O(n log n) guaranteed. The merge step is the key operation.", linkedPractice: [6] },
+      { name: "Convert Sorted Array to Binary Search Tree", diff: "easy", lc: 108, tip: null, pattern: "Build a balanced structure from sorted data", intuition: "Pick the middle element as root, recursively build left subtree from left half and right subtree from right half. Guarantees balance.", linkedPractice: [4] },
+      { name: "Maximum Subarray", diff: "medium", lc: 53, tip: null, pattern: "Find the maximum sum contiguous subarray", intuition: "Divide array in half. Max subarray is either entirely in left, entirely in right, or crosses the midpoint. Solve recursively and combine.", linkedPractice: [1] },
+      { name: "Majority Element", diff: "easy", lc: 169, tip: null, pattern: "Find the element appearing more than n/2 times", intuition: "Divide and conquer: majority of whole array must be majority of at least one half. Recursively find candidates and count. Or use Boyer-Moore voting.", linkedPractice: [2] },
+      { name: "Search a 2D Matrix II", diff: "medium", lc: 240, tip: null, pattern: "Search in a matrix sorted row-wise and column-wise", intuition: "Start from top-right (or bottom-left). If target < current, move left. If target > current, move down. Eliminates a row or column each step.", linkedPractice: [3] },
+      { name: "Kth Largest Element in an Array", diff: "medium", lc: 215, tip: null, pattern: "Select the Kth element without fully sorting", intuition: "QuickSelect: partition around a pivot. If pivot position = k, done. If k is left, recurse left; else recurse right. Average O(n).", linkedPractice: [9] },
     ],
     practice: [
       { name: "Merge k Sorted Lists", diff: "hard", lc: 23, tip: null },
@@ -1154,7 +1210,7 @@ function render() {
         const rowEl = document.getElementById(`row-${p.id}-${phase}-${idx}`);
         if (rowEl) {
           rowEl.addEventListener('click', (e) => {
-            if (e.target.classList.contains('tip-toggle') || e.target.classList.contains('lc-link')) return;
+            if (e.target.classList.contains('tip-toggle') || e.target.classList.contains('lc-link') || e.target.classList.contains('pattern-recog-toggle')) return;
             toggleCheck(p.id, phase, idx);
           });
         }
@@ -1166,6 +1222,17 @@ function render() {
               e.stopPropagation();
               box.classList.toggle('visible');
               btn.textContent = box.classList.contains('visible') ? '▲ hide tip' : '▼ show tip';
+            });
+          }
+        }
+        if (phase === 'learn' && prob.pattern) {
+          const recogBtn = document.getElementById(`recog-btn-${p.id}-${idx}`);
+          const recogBox = document.getElementById(`recog-box-${p.id}-${idx}`);
+          if (recogBtn && recogBox) {
+            recogBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              recogBox.classList.toggle('visible');
+              recogBtn.textContent = recogBox.classList.contains('visible') ? '▲ hide pattern' : '▼ pattern recognition';
             });
           }
         }
@@ -1215,6 +1282,15 @@ function renderPhase(p, phase, problems, range, label, desc) {
 
 function renderProblem(p, phase, prob, idx) {
   const done = isChecked(p.id, phase, idx);
+  const hasPatternRecog = phase === 'learn' && prob.pattern;
+  let linkedHtml = '';
+  if (hasPatternRecog && prob.linkedPractice && prob.linkedPractice.length > 0) {
+    const links = prob.linkedPractice.map(pi => {
+      const practice = p.practice[pi];
+      return practice ? `<span class="linked-badge">→ ${practice.name}</span>` : '';
+    }).join('');
+    linkedHtml = `<div style="margin-top:4px"><div class="recog-label">LINKED PRACTICE</div><div>${links}</div></div>`;
+  }
   return `
     <div class="problem-row ${done ? 'done' : ''}" id="row-${p.id}-${phase}-${idx}">
       <div class="check-box">${done ? '✓' : ''}</div>
@@ -1227,6 +1303,16 @@ function renderProblem(p, phase, prob, idx) {
         ${prob.tip ? `
           <button class="tip-toggle" id="tip-btn-${p.id}-${phase}-${idx}">▼ show tip</button>
           <div class="tip-box" id="tip-box-${p.id}-${phase}-${idx}">${prob.tip}</div>
+        ` : ''}
+        ${hasPatternRecog ? `
+          <button class="pattern-recog-toggle" id="recog-btn-${p.id}-${idx}">▼ pattern recognition</button>
+          <div class="pattern-recog-box" id="recog-box-${p.id}-${idx}">
+            <div class="recog-label">PATTERN CUE</div>
+            <div class="recog-text">${prob.pattern}</div>
+            <div class="recog-label">INTUITION</div>
+            <div class="recog-text">${prob.intuition}</div>
+            ${linkedHtml}
+          </div>
         ` : ''}
       </div>
     </div>
