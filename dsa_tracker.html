@@ -452,25 +452,25 @@
   <header>
     <div class="title-row">
       <h1>DSA Patterns</h1>
-      <span class="subtitle">// 15 patterns · 20 problems each · 300 total</span>
+      <span class="subtitle">// 20 patterns · 20 problems each · 400 total</span>
     </div>
   </header>
 
   <div class="overall-stats">
     <div class="stat-box stat-learn">
-      <div class="stat-num" id="stat-learn">0/105</div>
+      <div class="stat-num" id="stat-learn">0/140</div>
       <div class="stat-label">Learn Phase</div>
     </div>
     <div class="stat-box stat-practice">
-      <div class="stat-num" id="stat-practice">0/150</div>
+      <div class="stat-num" id="stat-practice">0/200</div>
       <div class="stat-label">Practice Phase</div>
     </div>
     <div class="stat-box stat-hard">
-      <div class="stat-num" id="stat-hard">0/45</div>
+      <div class="stat-num" id="stat-hard">0/60</div>
       <div class="stat-label">Challenge Phase</div>
     </div>
     <div class="stat-box stat-total">
-      <div class="stat-num" id="stat-total">0/300</div>
+      <div class="stat-num" id="stat-total">0/400</div>
       <div class="stat-label">Total Solved</div>
     </div>
   </div>
@@ -925,6 +925,151 @@ const PATTERNS = [
       { name: "Regular Expression Matching", diff: "hard", lc: 10, tip: "dp[i][j] = s[0..i-1] matches p[0..j-1]. For '*': dp[i][j] = dp[i][j-2] (skip) OR (s[i]==p[j-1] and dp[i-1][j]) (extend). Build bottom-up." },
       { name: "Edit Distance II - Minimum Edit with Constraints", diff: "hard", lc: 72, tip: "Classic Levenshtein: dp[i][j] = min edits for s[0..i] and t[0..j]. If chars match: dp[i][j]=dp[i-1][j-1]. Else: 1+min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) = delete, insert, replace." },
     ]
+  },
+  {
+    id: 16, name: "Greedy",
+    learn: [
+      { name: "Assign Cookies", diff: "easy", lc: 455, tip: null },
+      { name: "Lemonade Change", diff: "easy", lc: 860, tip: null },
+      { name: "Best Time to Buy and Sell Stock II", diff: "medium", lc: 122, tip: null },
+      { name: "Jump Game", diff: "medium", lc: 55, tip: null },
+      { name: "Gas Station", diff: "medium", lc: 134, tip: null },
+      { name: "Partition Labels", diff: "medium", lc: 763, tip: null },
+      { name: "Queue Reconstruction by Height", diff: "medium", lc: 406, tip: null },
+    ],
+    practice: [
+      { name: "Jump Game II", diff: "medium", lc: 45, tip: null },
+      { name: "Task Scheduler", diff: "medium", lc: 621, tip: null },
+      { name: "Non-overlapping Intervals", diff: "medium", lc: 435, tip: null },
+      { name: "Minimum Number of Arrows to Burst Balloons", diff: "medium", lc: 452, tip: null },
+      { name: "Reorganize String", diff: "medium", lc: 767, tip: null },
+      { name: "Candy", diff: "hard", lc: 135, tip: null },
+      { name: "Wiggle Subsequence", diff: "medium", lc: 376, tip: null },
+      { name: "Minimum Deletions to Make Character Frequencies Unique", diff: "medium", lc: 1647, tip: null },
+      { name: "Reduce Array Size to The Half", diff: "medium", lc: 1338, tip: null },
+      { name: "Boats to Save People", diff: "medium", lc: 881, tip: null },
+    ],
+    hard: [
+      { name: "Video Stitching", diff: "medium", lc: 1024, tip: "Sort clips by start. Greedily extend the farthest reachable end. At each step, pick the clip that starts before current end and extends farthest. Count the number of clips used." },
+      { name: "Minimum Number of Taps to Open to Water a Garden", diff: "hard", lc: 1326, tip: "Convert taps to intervals. Sort by start. Use greedy jump-game style: track farthest reachable, pick best extension at each step." },
+      { name: "IPO", diff: "hard", lc: 502, tip: "Sort projects by capital. Use a max-heap of profits. For each round, push all affordable projects into the heap and pick the most profitable one. Repeat k times." },
+    ]
+  },
+  {
+    id: 17, name: "Bit Manipulation",
+    learn: [
+      { name: "Single Number", diff: "easy", lc: 136, tip: null },
+      { name: "Number of 1 Bits", diff: "easy", lc: 191, tip: null },
+      { name: "Counting Bits", diff: "easy", lc: 338, tip: null },
+      { name: "Power of Two", diff: "easy", lc: 231, tip: null },
+      { name: "Reverse Bits", diff: "easy", lc: 190, tip: null },
+      { name: "Missing Number", diff: "easy", lc: 268, tip: null },
+      { name: "Add Binary", diff: "easy", lc: 67, tip: null },
+    ],
+    practice: [
+      { name: "Single Number II", diff: "medium", lc: 137, tip: null },
+      { name: "Single Number III", diff: "medium", lc: 260, tip: null },
+      { name: "Hamming Distance", diff: "easy", lc: 461, tip: null },
+      { name: "Total Hamming Distance", diff: "medium", lc: 477, tip: null },
+      { name: "Bitwise AND of Numbers Range", diff: "medium", lc: 201, tip: null },
+      { name: "Number Complement", diff: "easy", lc: 476, tip: null },
+      { name: "Sum of Two Integers", diff: "medium", lc: 371, tip: null },
+      { name: "UTF-8 Validation", diff: "medium", lc: 393, tip: null },
+      { name: "Decode XORed Permutation", diff: "medium", lc: 1734, tip: null },
+      { name: "Find the Duplicate Number", diff: "medium", lc: 287, tip: null },
+    ],
+    hard: [
+      { name: "Maximum XOR of Two Numbers in an Array", diff: "medium", lc: 421, tip: "Use a trie of binary representations. For each number, traverse the trie greedily choosing the opposite bit at each level to maximize XOR." },
+      { name: "Maximum Product of Word Lengths", diff: "medium", lc: 318, tip: "Represent each word as a bitmask of its characters. Two words share no letters if (mask1 & mask2) == 0. Check all pairs." },
+      { name: "Concatenation of Consecutive Binary Numbers", diff: "medium", lc: 1680, tip: "Iterate 1 to n. For each number, shift the running result left by the number of bits in i, then OR with i. Use modular arithmetic." },
+    ]
+  },
+  {
+    id: 18, name: "Binary Search",
+    learn: [
+      { name: "Binary Search", diff: "easy", lc: 704, tip: null },
+      { name: "Search Insert Position", diff: "easy", lc: 35, tip: null },
+      { name: "First Bad Version", diff: "easy", lc: 278, tip: null },
+      { name: "Sqrt(x)", diff: "easy", lc: 69, tip: null },
+      { name: "Guess Number Higher or Lower", diff: "easy", lc: 374, tip: null },
+      { name: "Valid Perfect Square", diff: "easy", lc: 367, tip: null },
+      { name: "Peak Index in a Mountain Array", diff: "medium", lc: 852, tip: null },
+    ],
+    practice: [
+      { name: "Find Minimum in Rotated Sorted Array", diff: "medium", lc: 153, tip: null },
+      { name: "Search in Rotated Sorted Array", diff: "medium", lc: 33, tip: null },
+      { name: "Search a 2D Matrix", diff: "medium", lc: 74, tip: null },
+      { name: "Find Peak Element", diff: "medium", lc: 162, tip: null },
+      { name: "Search in Rotated Sorted Array II", diff: "medium", lc: 81, tip: null },
+      { name: "Find First and Last Position of Element in Sorted Array", diff: "medium", lc: 34, tip: null },
+      { name: "Koko Eating Bananas", diff: "medium", lc: 875, tip: null },
+      { name: "Capacity To Ship Packages Within D Days", diff: "medium", lc: 1011, tip: null },
+      { name: "Time Based Key-Value Store", diff: "medium", lc: 981, tip: null },
+      { name: "Magnetic Force Between Two Balls", diff: "medium", lc: 1552, tip: null },
+    ],
+    hard: [
+      { name: "Median of Two Sorted Arrays", diff: "hard", lc: 4, tip: "Binary search on the smaller array. Partition both arrays so left halves have (m+n+1)/2 elements. Check cross-boundary conditions: maxLeftA <= minRightB and maxLeftB <= minRightA." },
+      { name: "Split Array Largest Sum", diff: "hard", lc: 410, tip: "Binary search on the answer (min possible largest sum). For each candidate, greedily check if the array can be split into ≤ k subarrays each ≤ candidate." },
+      { name: "Find in Mountain Array", diff: "hard", lc: 1095, tip: "Three binary searches: 1) find peak, 2) search ascending left half, 3) search descending right half. Minimize API calls using the peak to decide which half to search first." },
+    ]
+  },
+  {
+    id: 19, name: "Tries",
+    learn: [
+      { name: "Implement Trie (Prefix Tree)", diff: "medium", lc: 208, tip: null },
+      { name: "Design Add and Search Words Data Structure", diff: "medium", lc: 211, tip: null },
+      { name: "Longest Common Prefix", diff: "easy", lc: 14, tip: null },
+      { name: "Replace Words", diff: "medium", lc: 648, tip: null },
+      { name: "Map Sum Pairs", diff: "medium", lc: 677, tip: null },
+      { name: "Search Suggestions System", diff: "medium", lc: 1268, tip: null },
+      { name: "Index Pairs of a String", diff: "easy", lc: 1065, tip: null },
+    ],
+    practice: [
+      { name: "Top K Frequent Words", diff: "medium", lc: 692, tip: null },
+      { name: "Design Search Autocomplete System", diff: "hard", lc: 642, tip: null },
+      { name: "Word Break", diff: "medium", lc: 139, tip: null },
+      { name: "Word Break II", diff: "hard", lc: 140, tip: null },
+      { name: "Implement Magic Dictionary", diff: "medium", lc: 676, tip: null },
+      { name: "Stream of Characters", diff: "hard", lc: 1032, tip: null },
+      { name: "Camelcase Matching", diff: "medium", lc: 1023, tip: null },
+      { name: "Prefix and Suffix Search", diff: "hard", lc: 745, tip: null },
+      { name: "Short Encoding of Words", diff: "medium", lc: 820, tip: null },
+      { name: "Longest Word in Dictionary", diff: "medium", lc: 720, tip: null },
+    ],
+    hard: [
+      { name: "Word Search II", diff: "hard", lc: 212, tip: "Build a trie from the word list. DFS from each cell on the board, following trie edges. Prune branches when no trie children exist. Remove found words from trie to avoid duplicates." },
+      { name: "Palindrome Pairs", diff: "hard", lc: 336, tip: "Insert reversed words into a trie. For each word, check: 1) if a prefix matches a reversed word and the remaining suffix is a palindrome, 2) if the whole word is a prefix of a reversed word with palindromic remainder." },
+      { name: "Concatenated Words", diff: "hard", lc: 472, tip: "Sort words by length. For each word, use DP or DFS with a trie built from shorter words to check if it can be formed by concatenating 2+ words already in the trie." },
+    ]
+  },
+  {
+    id: 20, name: "Divide & Conquer",
+    learn: [
+      { name: "Merge Sorted Array", diff: "easy", lc: 88, tip: null },
+      { name: "Sort an Array", diff: "medium", lc: 912, tip: null },
+      { name: "Convert Sorted Array to Binary Search Tree", diff: "easy", lc: 108, tip: null },
+      { name: "Maximum Subarray", diff: "medium", lc: 53, tip: null },
+      { name: "Majority Element", diff: "easy", lc: 169, tip: null },
+      { name: "Search a 2D Matrix II", diff: "medium", lc: 240, tip: null },
+      { name: "Kth Largest Element in an Array", diff: "medium", lc: 215, tip: null },
+    ],
+    practice: [
+      { name: "Merge k Sorted Lists", diff: "hard", lc: 23, tip: null },
+      { name: "Different Ways to Add Parentheses", diff: "medium", lc: 241, tip: null },
+      { name: "Beautiful Array", diff: "medium", lc: 932, tip: null },
+      { name: "Longest Nice Substring", diff: "easy", lc: 1763, tip: null },
+      { name: "Construct Binary Tree from Preorder and Inorder Traversal", diff: "medium", lc: 105, tip: null },
+      { name: "Construct Binary Tree from Inorder and Postorder Traversal", diff: "medium", lc: 106, tip: null },
+      { name: "Sort List", diff: "medium", lc: 148, tip: null },
+      { name: "Largest Rectangle in Histogram", diff: "hard", lc: 84, tip: null },
+      { name: "Closest Pair of Points (Custom)", diff: "medium", lc: null, tip: null },
+      { name: "Pow(x, n)", diff: "medium", lc: 50, tip: null },
+    ],
+    hard: [
+      { name: "The Skyline Problem", diff: "hard", lc: 218, tip: "Divide buildings in half, solve each half recursively, then merge skylines. During merge, track the current height of both skylines and output key points where the max height changes." },
+      { name: "Count of Range Sum", diff: "hard", lc: 327, tip: "Compute prefix sums. Use merge sort on prefix sums: during merge, for each left element, find the range [lower, upper] in the right half using two pointers. Count valid pairs." },
+      { name: "Reverse Pairs", diff: "hard", lc: 493, tip: "During merge sort, before merging two halves, count pairs where nums[i] > 2*nums[j] using two pointers on the sorted halves. Add the count recursively." },
+    ]
   }
 ];
 
@@ -982,12 +1127,12 @@ function render() {
     totalHard += countDone(p.id, 'hard', 3);
   });
   const total = totalLearn + totalPractice + totalHard;
-  const pct = Math.round((total / 300) * 100);
+  const pct = Math.round((total / 400) * 100);
 
-  document.getElementById('stat-learn').textContent = `${totalLearn}/105`;
-  document.getElementById('stat-practice').textContent = `${totalPractice}/150`;
-  document.getElementById('stat-hard').textContent = `${totalHard}/45`;
-  document.getElementById('stat-total').textContent = `${total}/300`;
+  document.getElementById('stat-learn').textContent = `${totalLearn}/140`;
+  document.getElementById('stat-practice').textContent = `${totalPractice}/200`;
+  document.getElementById('stat-hard').textContent = `${totalHard}/60`;
+  document.getElementById('stat-total').textContent = `${total}/400`;
   document.getElementById('global-bar').style.width = pct + '%';
   document.getElementById('global-pct').textContent = pct + '%';
 
