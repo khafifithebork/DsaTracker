@@ -508,25 +508,25 @@
   <header>
     <div class="title-row">
       <h1>DSA Patterns</h1>
-      <span class="subtitle">// 20 patterns · 20 problems each · 400 total</span>
+      <span class="subtitle">// 21 patterns · 20 problems each · 420 total</span>
     </div>
   </header>
 
   <div class="overall-stats">
     <div class="stat-box stat-learn">
-      <div class="stat-num" id="stat-learn">0/140</div>
+      <div class="stat-num" id="stat-learn">0/147</div>
       <div class="stat-label">Learn Phase</div>
     </div>
     <div class="stat-box stat-practice">
-      <div class="stat-num" id="stat-practice">0/200</div>
+      <div class="stat-num" id="stat-practice">0/210</div>
       <div class="stat-label">Practice Phase</div>
     </div>
     <div class="stat-box stat-hard">
-      <div class="stat-num" id="stat-hard">0/60</div>
+      <div class="stat-num" id="stat-hard">0/63</div>
       <div class="stat-label">Challenge Phase</div>
     </div>
     <div class="stat-box stat-total">
-      <div class="stat-num" id="stat-total">0/400</div>
+      <div class="stat-num" id="stat-total">0/420</div>
       <div class="stat-label">Total Solved</div>
     </div>
   </div>
@@ -1099,6 +1099,35 @@ const PATTERNS = [
     ]
   },
   {
+    id: 21, name: "Heap / Priority Queue",
+    learn: [
+      { name: "Kth Largest Element in an Array", diff: "medium", lc: 215, tip: null, pattern: "Find the Kth largest element using a heap", intuition: "Maintain a min-heap of size K. Push every element; if heap exceeds K, pop the minimum. After all elements, the heap top is the Kth largest.", linkedPractice: [0] },
+      { name: "Last Stone Weight", diff: "easy", lc: 1046, tip: null, pattern: "Repeatedly extract and combine the two largest elements", intuition: "Use a max-heap. Each round, smash the two heaviest stones. Push the remainder back if nonzero. Return what's left (or 0).", linkedPractice: [3] },
+      { name: "K Closest Points to Origin", diff: "medium", lc: 973, tip: null, pattern: "Find K nearest items by a distance metric", intuition: "Use a max-heap of size K keyed on Euclidean distance. When size exceeds K, pop the farthest. Remaining K items are the closest.", linkedPractice: [5] },
+      { name: "Find Median from Data Stream", diff: "hard", lc: 295, tip: null, pattern: "Dynamically maintain the median of a growing dataset", intuition: "Two heaps: a max-heap for the lower half and a min-heap for the upper half. Balance sizes to differ by at most 1. Median is the top of the larger heap (or the average of both tops).", linkedPractice: [6] },
+      { name: "Task Scheduler", diff: "medium", lc: 621, tip: null, pattern: "Schedule tasks with cooldown constraints to minimise total time", intuition: "Use a max-heap of task frequencies. Each round, execute up to (n+1) distinct tasks choosing the most frequent. If fewer are available, insert idle time. Decrease counts and re-add nonzero ones.", linkedPractice: [4] },
+      { name: "Design Twitter", diff: "medium", lc: 355, tip: null, pattern: "Merge K sorted streams to retrieve the most recent items", intuition: "Store per-user tweet lists. For getNewsFeed, push the latest tweet from the user and all followees into a max-heap ordered by timestamp. Pop up to 10 times.", linkedPractice: [8] },
+      { name: "Reorganize String", diff: "medium", lc: 767, tip: null, pattern: "Rearrange elements so no two adjacent elements are the same", intuition: "Use a max-heap of (frequency, character) pairs. Always place the most frequent character next. If the previous character is still available, push it back after placing the current one.", linkedPractice: [7] },
+    ],
+    practice: [
+      { name: "Top K Frequent Elements", diff: "medium", lc: 347, tip: null },
+      { name: "Merge K Sorted Lists", diff: "hard", lc: 23, tip: null },
+      { name: "Kth Smallest Element in a Sorted Matrix", diff: "medium", lc: 378, tip: null },
+      { name: "Furthest Building You Can Reach", diff: "medium", lc: 1642, tip: null },
+      { name: "Maximum Subsequence Score", diff: "medium", lc: 2542, tip: null },
+      { name: "K Pairs with Smallest Sums", diff: "medium", lc: 373, tip: null },
+      { name: "Smallest Range Covering Elements from K Lists", diff: "hard", lc: 632, tip: null },
+      { name: "Seat Reservation Manager", diff: "medium", lc: 1845, tip: null },
+      { name: "Single-Threaded CPU", diff: "medium", lc: 1834, tip: null },
+      { name: "Process Tasks Using Servers", diff: "medium", lc: 1882, tip: null },
+    ],
+    hard: [
+      { name: "Sliding Window Median", diff: "hard", lc: 480, tip: "Maintain two heaps (max-heap for lower half, min-heap for upper half) with lazy deletion. Keep a set of 'to-be-removed' elements. Only count elements still in the window when reading medians." },
+      { name: "IPO", diff: "hard", lc: 502, tip: "Sort projects by required capital. Use a pointer to add all currently affordable projects to a max-heap keyed on profit. Greedily pick the most profitable project k times, updating available capital each round." },
+      { name: "Find Median from Data Stream", diff: "hard", lc: 295, tip: "Two heaps: max-heap for lower half, min-heap for upper half. After each insertion rebalance so sizes differ by at most 1. Median = top of larger heap, or average of both tops." },
+    ]
+  },
+  {
     id: 20, name: "Divide & Conquer",
     learn: [
       { name: "Merge Sorted Array", diff: "easy", lc: 88, tip: null, pattern: "Merge two sorted sequences into one", intuition: "Start from the end of both arrays, placing the larger element at the back. This avoids overwriting and works in-place.", linkedPractice: [0] },
@@ -1183,12 +1212,12 @@ function render() {
     totalHard += countDone(p.id, 'hard', 3);
   });
   const total = totalLearn + totalPractice + totalHard;
-  const pct = Math.round((total / 400) * 100);
+  const pct = Math.round((total / 420) * 100);
 
-  document.getElementById('stat-learn').textContent = `${totalLearn}/140`;
-  document.getElementById('stat-practice').textContent = `${totalPractice}/200`;
-  document.getElementById('stat-hard').textContent = `${totalHard}/60`;
-  document.getElementById('stat-total').textContent = `${total}/400`;
+  document.getElementById('stat-learn').textContent = `${totalLearn}/147`;
+  document.getElementById('stat-practice').textContent = `${totalPractice}/210`;
+  document.getElementById('stat-hard').textContent = `${totalHard}/63`;
+  document.getElementById('stat-total').textContent = `${total}/420`;
   document.getElementById('global-bar').style.width = pct + '%';
   document.getElementById('global-pct').textContent = pct + '%';
 
