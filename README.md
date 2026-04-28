@@ -1,4 +1,4 @@
-prompt
+PROMPT USED
 
 You are a senior software engineer and LaTeX expert. I will provide a code repository. Generate a complete, compilable LaTeX document that serves as exhaustive, interview-ready technical documentation.
 
